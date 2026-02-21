@@ -1,10 +1,51 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
-import heroImage from "@/assets/hero-slide-1.jpg";
+import { useState, useEffect } from "react";
+import heroImage1 from "@/assets/hero-slide-1.jpg";
+import heroImage2 from "@/assets/hero-slide-2.jpg";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
+
+const heroImages = [heroImage1, heroImage2];
+
+const HeroCarouselInner = () => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={current}
+          src={heroImages[current]}
+          alt="Pistanero – The Home of Sports"
+          className="absolute inset-0 w-full h-full object-cover"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+        />
+      </AnimatePresence>
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        {heroImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`w-2 h-2 rounded-full transition-all ${i === current ? "bg-primary w-6" : "bg-foreground/40"}`}
+          />
+        ))}
+      </div>
+    </>
+  );
+};
 
 const Index = () => {
   const { addItem } = useCart();
@@ -19,11 +60,7 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Full-screen Hero */}
       <div className="relative w-full h-screen overflow-hidden">
-        <img
-          src={heroImage}
-          alt="Pistanero – The Home of Sports"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <HeroCarouselInner />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
 
         <div className="absolute inset-0 z-10 px-4 pt-20 md:pt-24 lg:pt-28 flex justify-center">
