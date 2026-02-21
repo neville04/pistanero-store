@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
 import AdminHome from "./pages/admin/AdminHome";
+import AdminProducts from "./pages/admin/AdminProducts";
 import AdminSales from "./pages/admin/AdminSales";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminLogin from "./pages/AdminLogin";
@@ -38,6 +39,7 @@ const AppRoutes = () => {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHome />} />
+          <Route path="products" element={<AdminProducts />} />
           <Route path="sales" element={<AdminSales />} />
           <Route path="orders" element={<AdminOrders />} />
         </Route>
