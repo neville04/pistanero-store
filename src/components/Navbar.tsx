@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/logo.png";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -22,13 +23,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 z-10">
-          <span className="font-display text-2xl font-bold tracking-wider text-primary">
-            PISTA
-          </span>
-          <span className="font-display text-2xl font-bold tracking-wider text-foreground">
-            NERO
-          </span>
+        <Link to="/" className="z-10">
+          <img src={logo} alt="Pistanero" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop Nav */}
