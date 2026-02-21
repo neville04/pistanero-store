@@ -13,6 +13,7 @@ import SectionProducts from "./pages/SectionProducts";
 import Courts from "./pages/Courts";
 import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
 import AdminHome from "./pages/admin/AdminHome";
@@ -43,6 +44,7 @@ const AppRoutes = () => {
         <Route path="/courts" element={<Courts />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin-login" element={<AdminLogin />} />
