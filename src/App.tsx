@@ -19,8 +19,10 @@ import AdminHome from "./pages/admin/AdminHome";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminSales from "./pages/admin/AdminSales";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsers from "./pages/admin/AdminUsers";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
+import WelcomeDialog from "./components/WelcomeDialog";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,7 @@ const AppRoutes = () => {
   return (
     <>
       {!isAdminRoute && <Navbar />}
+      <WelcomeDialog />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/products" element={<Products />} />
@@ -48,6 +51,7 @@ const AppRoutes = () => {
           <Route path="products" element={<AdminProducts />} />
           <Route path="sales" element={<AdminSales />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

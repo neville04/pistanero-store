@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
+import SignInPromptDialog from "@/components/SignInPromptDialog";
 
 interface SectionProductsProps {
   section: string;
@@ -13,11 +16,14 @@ interface SectionProductsProps {
 
 const SectionProducts = ({ section, title, subtitle }: SectionProductsProps) => {
   const { addItem } = useCart();
+  const { user } = useAuth();
   const { products, loading } = useProducts();
+  const [signInOpen, setSignInOpen] = useState(false);
 
   const filtered = products.filter((p) => p.section === section);
 
   const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
+    if (!user) { setSignInOpen(true); return; }
     addItem({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] });
     toast.success(`${product.name} added to cart`);
   };
@@ -82,6 +88,7 @@ const SectionProducts = ({ section, title, subtitle }: SectionProductsProps) => 
           )}
         </div>
       </div>
+      <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
       <Footer />
     </div>
   );
