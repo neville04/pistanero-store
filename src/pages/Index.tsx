@@ -95,7 +95,7 @@ const Index = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                THE HOME
+                BUILT FOR
               </motion.span>
               <motion.span
                 className="text-primary block mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
@@ -104,7 +104,7 @@ const Index = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
-                OF SPORTS
+                THE COURT
               </motion.span>
             </h1>
 
@@ -114,6 +114,16 @@ const Index = () => {
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.6, delay: 0.9 }}
             />
+
+            <motion.a
+              href="/products"
+              className="inline-block mt-8 px-8 py-3 bg-primary text-primary-foreground font-display text-sm uppercase tracking-widest rounded hover:bg-primary/80 transition-colors"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              Shop Now
+            </motion.a>
           </motion.div>
         </div>
       </div>
