@@ -60,7 +60,7 @@ const AdminHome = () => {
       <h1 className="font-display text-3xl font-bold mb-8">
         Dashboard <span className="text-primary">Overview</span>
       </h1>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         {cards.map((c) => (
           <div key={c.label} className="glass-card p-5 text-center">
             <c.icon className={`w-6 h-6 mx-auto mb-2 ${c.color}`} />
