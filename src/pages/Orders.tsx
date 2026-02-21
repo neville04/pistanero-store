@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Clock, CheckCircle2, Loader2 } from "lucide-react";
+import { Package, Clock, Loader2, CheckCircle2, Truck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -19,12 +19,14 @@ interface Order {
   status: string;
   total: number;
   items: OrderItem[];
+  transaction_id: string | null;
+  delivery_method: string;
 }
 
-const statusConfig: Record<string, { icon: any; color: string }> = {
-  pending: { icon: Clock, color: "text-yellow-400" },
-  processing: { icon: Loader2, color: "text-blue-400" },
-  completed: { icon: CheckCircle2, color: "text-green-400" },
+const statusConfig: Record<string, { icon: any; color: string; label: string }> = {
+  pending: { icon: Clock, color: "text-yellow-400", label: "Payment Pending Verification" },
+  processing: { icon: Truck, color: "text-blue-400", label: "Order Confirmed & Processing" },
+  delivered: { icon: CheckCircle2, color: "text-green-400", label: "Delivered" },
 };
 
 const Orders = () => {
@@ -33,10 +35,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+    if (!user) { setLoading(false); return; }
 
     const fetchOrders = async () => {
       const { data } = await supabase
@@ -55,19 +54,36 @@ const Orders = () => {
     };
 
     fetchOrders();
+
+    // Realtime subscription for order updates
+    const channel = supabase
+      .channel("user-orders")
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+        filter: `user_id=eq.${user.id}`,
+      }, (payload) => {
+        setOrders((prev) =>
+          prev.map((o) => o.id === payload.new.id ? { ...o, ...payload.new, items: payload.new.items as OrderItem[] } : o)
+        );
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   if (!user) {
     return (
-      <div className="min-h-screen pt-28 px-4 flex flex-col items-center justify-center gap-4">
-        <Package className="w-16 h-16 text-muted-foreground" />
-        <h2 className="font-display text-2xl font-bold">Sign in to view orders</h2>
-        <Link
-          to="/auth"
-          className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-display text-sm uppercase tracking-widest"
-        >
-          Sign In
-        </Link>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 pt-28 px-4 flex flex-col items-center justify-center gap-4">
+          <Package className="w-16 h-16 text-muted-foreground" />
+          <h2 className="font-display text-2xl font-bold">Sign in to view orders</h2>
+          <Link to="/auth" className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-display text-sm uppercase tracking-widest">
+            Sign In
+          </Link>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -113,7 +129,7 @@ const Orders = () => {
                     transition={{ delay: i * 0.05 }}
                     className="glass-card p-6"
                   >
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-start justify-between mb-4">
                       <div>
                         <p className="text-xs text-muted-foreground">
                           {new Date(order.created_at).toLocaleDateString()}
@@ -121,10 +137,18 @@ const Orders = () => {
                         <p className="text-xs text-muted-foreground font-mono">
                           #{order.id.slice(0, 8)}
                         </p>
+                        {order.transaction_id && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            TxID: <span className="font-mono">{order.transaction_id}</span>
+                          </p>
+                        )}
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {order.delivery_method === "delivery" ? "🚚 Delivery" : "🏪 Pickup"}
+                        </p>
                       </div>
                       <div className={`flex items-center gap-1.5 ${config.color}`}>
                         <StatusIcon className="w-4 h-4" />
-                        <span className="text-sm font-medium capitalize">{order.status}</span>
+                        <span className="text-sm font-medium">{config.label}</span>
                       </div>
                     </div>
                     <div className="space-y-2 mb-4">

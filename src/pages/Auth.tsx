@@ -10,6 +10,8 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -32,7 +34,10 @@ const Auth = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { full_name: fullName, phone },
+          },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your account!");
@@ -57,10 +62,36 @@ const Auth = () => {
             <span className="text-primary">Pistanero</span>
           </h1>
           <p className="text-muted-foreground text-center text-sm mb-8">
-            {isLogin ? "Sign in to your account" : "Create your account"}
+            {isLogin ? "Sign in to your account" : "Create your account to track orders"}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Full Name</label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="07XXXXXXXX"
+                  />
+                </div>
+              </>
+            )}
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">Email</label>
               <input
