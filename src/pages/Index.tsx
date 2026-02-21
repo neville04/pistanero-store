@@ -3,12 +3,15 @@ import { ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import heroImage1 from "@/assets/hero-slide-1.jpg";
 import heroImage2 from "@/assets/hero-slide-2.jpg";
+import heroImage3 from "@/assets/hero-slide-3.jpg";
+import heroImage4 from "@/assets/hero-slide-4.jpg";
+import heroImage5 from "@/assets/hero-slide-5.jpg";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
-const heroImages = [heroImage1, heroImage2];
+const heroImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5];
 
 const HeroCarouselInner = () => {
   const [current, setCurrent] = useState(0);
@@ -61,7 +64,7 @@ const Index = () => {
       {/* Full-screen Hero */}
       <div className="relative w-full h-screen overflow-hidden">
         <HeroCarouselInner />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-black/40" />
 
         <div className="absolute inset-0 z-10 px-4 pt-20 md:pt-24 lg:pt-28 flex justify-center">
           <motion.div
@@ -86,7 +89,7 @@ const Index = () => {
               }}
             >
               <motion.span
-                className="text-foreground block"
+                className="text-white block drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -94,7 +97,7 @@ const Index = () => {
                 THE HOME
               </motion.span>
               <motion.span
-                className="text-primary block mt-1"
+                className="text-primary block mt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
                 style={{ letterSpacing: "0.12em" }}
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
