@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, TrendingUp, Package, LogOut, Menu, X } from "lucide-react";
+import { Home, TrendingUp, Package, LogOut, Menu, X, Users } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
@@ -11,6 +11,7 @@ const adminLinks = [
   { to: "/admin/products", label: "Products", icon: ShoppingBag },
   { to: "/admin/sales", label: "Sales", icon: TrendingUp },
   { to: "/admin/orders", label: "Orders", icon: Package },
+  { to: "/admin/users", label: "Users", icon: Users },
 ];
 
 const AdminNavbar = () => {

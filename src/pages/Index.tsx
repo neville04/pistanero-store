@@ -8,8 +8,10 @@ import heroImage4 from "@/assets/hero-slide-4.jpg";
 import heroImage5 from "@/assets/hero-slide-5.jpg";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
+import SignInPromptDialog from "@/components/SignInPromptDialog";
 
 const heroImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5];
 
@@ -53,9 +55,12 @@ const HeroCarouselInner = () => {
 
 const Index = () => {
   const { addItem } = useCart();
+  const { user } = useAuth();
   const { products: featured, loading } = useProducts(true);
+  const [signInOpen, setSignInOpen] = useState(false);
 
   const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
+    if (!user) { setSignInOpen(true); return; }
     addItem({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] });
     toast.success(`${product.name} added to cart`);
   };
@@ -182,6 +187,7 @@ const Index = () => {
         </div>
       </section>
 
+      <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
       <Footer />
     </div>
   );
