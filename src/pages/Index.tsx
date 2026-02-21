@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, Truck, Star } from "lucide-react";
 import HeroCarousel from "@/components/HeroCarousel";
 import { products } from "@/data/products";
+import logo from "@/assets/logo.png";
 
 const features = [
   { icon: ShieldCheck, title: "Premium Quality", desc: "Tournament-grade equipment for every athlete." },
@@ -120,9 +121,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="font-display text-xl font-bold mb-2">
-            <span className="text-primary">PISTA</span>NERO
-          </p>
+          <img src={logo} alt="Pistanero" className="h-10 w-auto mx-auto mb-4" />
           <p className="text-muted-foreground text-sm">
             © 2026 Pistanero. All rights reserved.
           </p>
