@@ -42,15 +42,6 @@ const Index = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             />
 
-            <motion.span
-              className="text-muted-foreground/70 uppercase tracking-[0.5em] text-[10px] md:text-xs font-medium block mb-4"
-              style={{ fontFamily: "'Oswald', sans-serif" }}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              Welcome to
-            </motion.span>
 
             <h1
               className="uppercase font-black leading-none"
