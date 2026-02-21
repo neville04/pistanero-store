@@ -1,18 +1,17 @@
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import heroImage from "@/assets/hero-slide-1.jpg";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
-const featured = products.slice(0, 4);
-
 const Index = () => {
   const { addItem } = useCart();
+  const { products: featured, loading } = useProducts(true);
 
-  const handleAdd = (product: (typeof products)[0]) => {
-    addItem({ id: product.id, name: product.name, price: product.price });
+  const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
+    addItem({ id: product.id, name: product.name, price: product.price, image: product.image_urls?.[0] });
     toast.success(`${product.name} added to cart`);
   };
 
@@ -34,14 +33,12 @@ const Index = () => {
             transition={{ duration: 1 }}
             className="text-center"
           >
-            {/* Decorative line */}
             <motion.div
               className="w-12 h-[2px] bg-primary mx-auto mb-6"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             />
-
 
             <h1
               className="uppercase font-black leading-none"
@@ -70,7 +67,6 @@ const Index = () => {
               </motion.span>
             </h1>
 
-            {/* Decorative line */}
             <motion.div
               className="w-12 h-[2px] bg-primary mx-auto mt-6"
               initial={{ scaleX: 0 }}
@@ -90,37 +86,48 @@ const Index = () => {
           <p className="text-muted-foreground text-center mb-12">
             Top picks for every athlete.
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featured.map((product, i) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-card p-6 flex flex-col hover-glow group"
-              >
-                <div className="w-full h-40 bg-secondary/50 rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-muted-foreground text-xs font-display uppercase tracking-widest">
-                    {product.category}
-                  </span>
-                </div>
-                <h3 className="font-display text-sm font-semibold mb-1 group-hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-muted-foreground text-xs mb-3 flex-1">{product.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-primary font-bold text-lg">${product.price}</span>
-                  <button
-                    onClick={() => handleAdd(product)}
-                    className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {loading ? (
+            <p className="text-center text-muted-foreground">Loading...</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featured.map((product, i) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass-card p-6 flex flex-col hover-glow group"
+                >
+                  <div className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30">
+                    {product.image_urls.length > 0 ? (
+                      <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-muted-foreground text-xs font-display uppercase tracking-widest">
+                        {product.category}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-display text-sm font-semibold mb-1 group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+                  {product.color && (
+                    <p className="text-muted-foreground text-xs mb-1">{product.color}{product.size ? ` · Size ${product.size}` : ""}</p>
+                  )}
+                  <p className="text-muted-foreground text-xs mb-3 flex-1">{product.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-primary font-bold text-lg">{product.price.toLocaleString()} UGX</span>
+                    <button
+                      onClick={() => handleAdd(product)}
+                      className="p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 transition-colors"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

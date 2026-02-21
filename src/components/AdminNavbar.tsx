@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
+import { ShoppingBag } from "lucide-react";
+
 const adminLinks = [
   { to: "/admin", label: "Home", icon: Home },
+  { to: "/admin/products", label: "Products", icon: ShoppingBag },
   { to: "/admin/sales", label: "Sales", icon: TrendingUp },
   { to: "/admin/orders", label: "Orders", icon: Package },
 ];
