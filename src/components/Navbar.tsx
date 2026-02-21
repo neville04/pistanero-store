@@ -21,6 +21,7 @@ const navLinks = [
       { to: "/products?category=Accessories", label: "Accessories" },
     ],
   },
+  { to: "/contact", label: "Contact" },
 ];
 
 const Navbar = () => {
