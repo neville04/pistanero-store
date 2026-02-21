@@ -5,6 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Footer from "@/components/Footer";
 
 const Cart = () => {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
@@ -52,70 +53,73 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen pt-28 px-4 pb-16">
-      <div className="max-w-3xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-display text-4xl font-bold mb-8"
-        >
-          Your <span className="text-primary">Cart</span>
-        </motion.h1>
-
-        <div className="space-y-4 mb-8">
-          {items.map((item) => (
-            <motion.div
-              key={item.id}
-              layout
-              className="glass-card p-4 flex items-center gap-4"
-            >
-              <div className="w-16 h-16 bg-secondary/50 rounded-lg flex items-center justify-center shrink-0">
-                <ShoppingBag className="w-6 h-6 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-display text-sm font-semibold truncate">{item.name}</h3>
-                <p className="text-primary font-bold">${item.price}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  className="p-1 rounded-full bg-secondary hover:bg-secondary/80"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="w-8 text-center font-medium">{item.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  className="p-1 rounded-full bg-secondary hover:bg-secondary/80"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-              <button
-                onClick={() => removeItem(item.id)}
-                className="p-2 text-destructive hover:bg-destructive/10 rounded-full transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="glass-card p-6">
-          <div className="flex justify-between mb-4">
-            <span className="text-muted-foreground">Total</span>
-            <span className="font-display text-2xl font-bold text-primary">
-              ${totalPrice.toFixed(2)}
-            </span>
-          </div>
-          <button
-            onClick={handleCheckout}
-            className="w-full py-3 bg-primary text-primary-foreground font-display text-sm uppercase tracking-widest rounded-full hover:bg-primary/90 transition-all hover-glow"
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 pt-28 px-4 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-4xl font-bold mb-8"
           >
-            {user ? "Place Order" : "Sign In to Checkout"}
-          </button>
+            Your <span className="text-primary">Cart</span>
+          </motion.h1>
+
+          <div className="space-y-4 mb-8">
+            {items.map((item) => (
+              <motion.div
+                key={item.id}
+                layout
+                className="glass-card p-4 flex items-center gap-4"
+              >
+                <div className="w-16 h-16 bg-secondary/50 rounded-lg flex items-center justify-center shrink-0">
+                  <ShoppingBag className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-display text-sm font-semibold truncate">{item.name}</h3>
+                  <p className="text-primary font-bold">${item.price}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="p-1 rounded-full bg-secondary hover:bg-secondary/80"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="w-8 text-center font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="p-1 rounded-full bg-secondary hover:bg-secondary/80"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="p-2 text-destructive hover:bg-destructive/10 rounded-full transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="glass-card p-6">
+            <div className="flex justify-between mb-4">
+              <span className="text-muted-foreground">Total</span>
+              <span className="font-display text-2xl font-bold text-primary">
+                ${totalPrice.toFixed(2)}
+              </span>
+            </div>
+            <button
+              onClick={handleCheckout}
+              className="w-full py-3 bg-primary text-primary-foreground font-display text-sm uppercase tracking-widest rounded-full hover:bg-primary/90 transition-all hover-glow"
+            >
+              {user ? "Place Order" : "Sign In to Checkout"}
+            </button>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
