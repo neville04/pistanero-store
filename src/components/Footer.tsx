@@ -47,7 +47,7 @@ const Footer = () => {
         {/* Social / WhatsApp */}
         <div>
           <h4 className="font-display text-lg font-semibold mb-4">Get in Touch</h4>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <a
               href="https://wa.me/256771699039"
               target="_blank"

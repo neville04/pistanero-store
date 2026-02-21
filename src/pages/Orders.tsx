@@ -129,7 +129,7 @@ const Orders = () => {
                     transition={{ delay: i * 0.05 }}
                     className="glass-card p-6"
                   >
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
                       <div>
                         <p className="text-xs text-muted-foreground">
                           {new Date(order.created_at).toLocaleDateString()}
@@ -147,8 +147,8 @@ const Orders = () => {
                         </p>
                       </div>
                       <div className={`flex items-center gap-1.5 ${config.color}`}>
-                        <StatusIcon className="w-4 h-4" />
-                        <span className="text-sm font-medium">{config.label}</span>
+                        <StatusIcon className="w-4 h-4 shrink-0" />
+                        <span className="text-sm font-medium whitespace-nowrap">{config.label}</span>
                       </div>
                     </div>
                     <div className="space-y-2 mb-4">
