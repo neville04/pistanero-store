@@ -47,8 +47,11 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="z-10">
-          <img src={logo} alt="Pistanero" className="h-10 w-auto brightness-0 invert" />
+        <Link to="/" className="z-10 flex items-center gap-2">
+          <div className="relative h-10 w-10 flex items-center justify-center">
+            <img src={logo} alt="" className="h-10 w-10 object-contain" style={{ filter: "brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(5000%) hue-rotate(355deg) brightness(95%) contrast(110%)" }} />
+          </div>
+          <span className="font-display text-lg font-bold text-white tracking-wide">PISTA NERO</span>
         </Link>
 
         {/* Desktop Nav */}
