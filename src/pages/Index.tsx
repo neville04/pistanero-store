@@ -67,7 +67,7 @@ const Index = () => {
         <HeroCarouselInner />
         <div className="absolute inset-0 bg-black/40" />
 
-        <div className="absolute inset-0 z-10 px-4 pt-20 md:pt-24 lg:pt-28 flex justify-center">
+        <div className="absolute inset-0 z-10 px-4 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
