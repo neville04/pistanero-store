@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, User, Menu, X } from "lucide-react";
+import { ShoppingCart, User, Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
@@ -7,15 +7,26 @@ import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/products", label: "Products" },
-  { to: "/orders", label: "Orders" },
-  { to: "/contact", label: "Contact" },
+  { to: "/men", label: "Men" },
+  { to: "/women", label: "Women" },
+  { to: "/courts", label: "Courts" },
+  { to: "/bags", label: "Bags" },
+  {
+    to: "/products",
+    label: "Sports",
+    children: [
+      { to: "/products?category=Rackets", label: "Rackets" },
+      { to: "/products?category=Balls", label: "Balls" },
+      { to: "/products?category=Training", label: "Training" },
+      { to: "/products?category=Accessories", label: "Accessories" },
+    ],
+  },
 ];
 
 const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sportsOpen, setSportsOpen] = useState(false);
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
 
@@ -29,19 +40,53 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex glass-nav px-8 py-3 gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`font-body text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === link.to
-                  ? "text-primary"
-                  : "text-foreground/80"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              <div key={link.to} className="relative group">
+                <button
+                  className={`font-body text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                    location.pathname === link.to
+                      ? "text-primary"
+                      : "text-foreground/80"
+                  }`}
+                >
+                  {link.label}
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="glass-card p-2 min-w-[160px] flex flex-col gap-1">
+                    <Link
+                      to={link.to}
+                      className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-secondary/50 rounded-md transition-colors"
+                    >
+                      All Sports
+                    </Link>
+                    {link.children.map((child) => (
+                      <Link
+                        key={child.to}
+                        to={child.to}
+                        className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-secondary/50 rounded-md transition-colors"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`font-body text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === link.to
+                    ? "text-primary"
+                    : "text-foreground/80"
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Actions */}
@@ -104,20 +149,64 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -20 }}
             className="md:hidden absolute top-full left-4 right-4 mt-2 glass-card p-6 flex flex-col gap-4"
           >
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
-                className={`font-body text-lg font-medium ${
-                  location.pathname === link.to
-                    ? "text-primary"
-                    : "text-foreground/80"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.children ? (
+                <div key={link.to}>
+                  <button
+                    onClick={() => setSportsOpen(!sportsOpen)}
+                    className={`font-body text-lg font-medium flex items-center gap-1 ${
+                      location.pathname === link.to
+                        ? "text-primary"
+                        : "text-foreground/80"
+                    }`}
+                  >
+                    {link.label}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${sportsOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  <AnimatePresence>
+                    {sportsOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden pl-4 flex flex-col gap-2 mt-2"
+                      >
+                        <Link
+                          to={link.to}
+                          onClick={() => setMobileOpen(false)}
+                          className="text-foreground/70 text-base"
+                        >
+                          All Sports
+                        </Link>
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.to}
+                            to={child.to}
+                            onClick={() => setMobileOpen(false)}
+                            className="text-foreground/70 text-base"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setMobileOpen(false)}
+                  className={`font-body text-lg font-medium ${
+                    location.pathname === link.to
+                      ? "text-primary"
+                      : "text-foreground/80"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </motion.div>
         )}
       </AnimatePresence>

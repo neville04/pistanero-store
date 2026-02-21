@@ -4,6 +4,7 @@ import { Package, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 interface OrderItem {
   id: string;
@@ -80,71 +81,74 @@ const Orders = () => {
   }
 
   return (
-    <div className="min-h-screen pt-28 px-4 pb-16">
-      <div className="max-w-4xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-display text-4xl font-bold mb-8"
-        >
-          Your <span className="text-primary">Orders</span>
-        </motion.h1>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 pt-28 px-4 pb-16">
+        <div className="max-w-4xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-4xl font-bold mb-8"
+          >
+            Your <span className="text-primary">Orders</span>
+          </motion.h1>
 
-        {orders.length === 0 ? (
-          <div className="text-center py-16">
-            <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No orders yet.</p>
-            <Link to="/products" className="text-primary hover:underline text-sm mt-2 inline-block">
-              Start Shopping
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {orders.map((order, i) => {
-              const config = statusConfig[order.status] || statusConfig.pending;
-              const StatusIcon = config.icon;
-              return (
-                <motion.div
-                  key={order.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="glass-card p-6"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </p>
-                      <p className="text-xs text-muted-foreground font-mono">
-                        #{order.id.slice(0, 8)}
-                      </p>
-                    </div>
-                    <div className={`flex items-center gap-1.5 ${config.color}`}>
-                      <StatusIcon className="w-4 h-4" />
-                      <span className="text-sm font-medium capitalize">{order.status}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span>
-                          {item.name} <span className="text-muted-foreground">×{item.quantity}</span>
-                        </span>
-                        <span className="text-muted-foreground">${(item.price * item.quantity).toFixed(2)}</span>
+          {orders.length === 0 ? (
+            <div className="text-center py-16">
+              <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No orders yet.</p>
+              <Link to="/products" className="text-primary hover:underline text-sm mt-2 inline-block">
+                Start Shopping
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order, i) => {
+                const config = statusConfig[order.status] || statusConfig.pending;
+                const StatusIcon = config.icon;
+                return (
+                  <motion.div
+                    key={order.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="glass-card p-6"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">
+                          #{order.id.slice(0, 8)}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                  <div className="border-t border-border pt-3 flex justify-between">
-                    <span className="font-display text-sm font-semibold">Total</span>
-                    <span className="font-bold text-primary">${order.total.toFixed(2)}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
+                      <div className={`flex items-center gap-1.5 ${config.color}`}>
+                        <StatusIcon className="w-4 h-4" />
+                        <span className="text-sm font-medium capitalize">{order.status}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 mb-4">
+                      {order.items.map((item) => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span>
+                            {item.name} <span className="text-muted-foreground">×{item.quantity}</span>
+                          </span>
+                          <span className="text-muted-foreground">${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-border pt-3 flex justify-between">
+                      <span className="font-display text-sm font-semibold">Total</span>
+                      <span className="font-bold text-primary">${order.total.toFixed(2)}</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
