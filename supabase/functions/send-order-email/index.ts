@@ -58,23 +58,38 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Pistanero <orders@pistanero.com>",
+        from: "Pistanero <onboarding@resend.dev>",
         to: [email],
         subject: `Pistanero - ${config.subject}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #111; color: #fff;">
-            <div style="text-align: center; padding: 20px 0;">
-              <img src="https://knulhygeseazoappsedy.supabase.co/storage/v1/object/public/email-assets/logo.png" alt="Pistanero" style="height: 50px;" />
+          <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #141820; border-radius: 12px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #141820, #1a1f2e); padding: 32px 24px; text-align: center; border-bottom: 2px solid #f97316;">
+              <img src="https://knulhygeseazoappsedy.supabase.co/storage/v1/object/public/email-assets/logo.png" alt="Pistanero" style="height: 48px;" />
             </div>
-            <hr style="border: 1px solid #333; margin: 0 0 20px 0;" />
-            <p>Hi <strong>${name}</strong>,</p>
-            <p style="color: #ccc;">${config.message}</p>
-            <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #333;">
-              <p style="margin: 4px 0;"><strong>Order:</strong> #${orderId}</p>
-              <p style="margin: 4px 0;"><strong>Status:</strong> <span style="color: #f97316;">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
-              <p style="margin: 4px 0;"><strong>Total:</strong> $${total?.toFixed(2) || "0.00"}</p>
+            <div style="padding: 32px 24px;">
+              <p style="color: #f0f0f0; font-size: 16px; margin: 0 0 8px;">Hi <strong>${name}</strong>,</p>
+              <p style="color: #a0a0a0; font-size: 14px; line-height: 1.6; margin: 0 0 24px;">${config.message}</p>
+              <div style="background: #1c2130; padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0;">Order</td>
+                    <td style="color: #f0f0f0; font-size: 14px; text-align: right; padding: 6px 0; font-family: monospace;">#${orderId}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0;">Status</td>
+                    <td style="color: #f97316; font-size: 14px; font-weight: bold; text-align: right; padding: 6px 0;">${status.charAt(0).toUpperCase() + status.slice(1)}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0;">Total</td>
+                    <td style="color: #f97316; font-size: 16px; font-weight: bold; text-align: right; padding: 6px 0;">${total?.toLocaleString() || "0"} UGX</td>
+                  </tr>
+                </table>
+              </div>
             </div>
-            <p style="color: #666; font-size: 12px; text-align: center;">Pistanero - The Home of Sports<br/>Sabagabo, Uganda | 0771699039</p>
+            <div style="background: #0f1218; padding: 20px 24px; text-align: center;">
+              <p style="color: #555; font-size: 11px; margin: 0; letter-spacing: 0.5px;">Pistanero — The Home of Sports</p>
+              <p style="color: #444; font-size: 11px; margin: 4px 0 0;">Sabagabo, Uganda · 0771699039</p>
+            </div>
           </div>
         `,
       }),
