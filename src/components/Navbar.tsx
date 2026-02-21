@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, User, Menu, X, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,8 +28,20 @@ const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sportsOpen, setSportsOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef<HTMLDivElement>(null);
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+        setAccountOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
@@ -105,19 +117,48 @@ const Navbar = () => {
           </Link>
 
           {user ? (
-            <div className="flex items-center gap-2">
-              <Link
-                to="/orders"
+            <div className="relative" ref={accountRef}>
+              <button
+                onClick={() => setAccountOpen(!accountOpen)}
                 className="p-2 rounded-full transition-colors hover:bg-secondary"
               >
                 <User className="w-5 h-5 text-foreground" />
-              </Link>
-              <button
-                onClick={signOut}
-                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-              >
-                Logout
               </button>
+              <AnimatePresence>
+                {accountOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-64 glass-card p-5 flex flex-col gap-3 z-50"
+                  >
+                    <p className="font-display text-sm font-semibold text-foreground truncate">
+                      {user.user_metadata?.full_name || "User"}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                    <hr className="border-border" />
+                    <Link
+                      to="/orders"
+                      onClick={() => setAccountOpen(false)}
+                      className="text-sm text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      My Orders
+                    </Link>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setAccountOpen(false);
+                      }}
+                      className="w-full py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <Link

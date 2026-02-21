@@ -25,7 +25,7 @@ const Index = () => {
           alt="Pistanero – The Home of Sports"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
 
         <div className="absolute inset-0 z-10 px-4 pt-20 md:pt-24 lg:pt-28 flex justify-center">
           <motion.div
@@ -82,7 +82,7 @@ const Index = () => {
       </div>
 
       {/* Featured Products */}
-      <section className="py-20 px-4">
+      <section className="-mt-32 relative z-10 pt-4 pb-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-2">
             Featured <span className="text-primary">Products</span>
