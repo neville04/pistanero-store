@@ -34,7 +34,7 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
-        <div className="absolute inset-0 flex items-end justify-center z-10 pb-32 px-4">
+        <div className="absolute inset-0 flex items-center justify-center z-10 px-4 -mt-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -42,18 +42,29 @@ const Index = () => {
             className="text-center"
           >
             <h1
-              className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight tracking-tight uppercase"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              className="text-foreground leading-none uppercase"
+              style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "clamp(3.5rem, 10vw, 9rem)",
+                letterSpacing: "0.15em",
+                wordSpacing: "0.2em",
+              }}
             >
-              The H
-              <span style={{ display: "inline-block", transform: "scaleY(1.3)", transformOrigin: "bottom" }}>o</span>
-              <span style={{ display: "inline-block", transform: "scaleY(1.3)", transformOrigin: "bottom" }}>m</span>
-              e
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>T</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>H</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>E</span>
+              <span className="inline-block" style={{ width: "0.3em" }} />
+              <span style={{ display: "inline-block", transform: "scaleX(1.35)" }}>H</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.4)" }}>O</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.4)" }}>M</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>E</span>
               <br />
-              <span className="text-foreground/90">of </span>
-              <span className="text-primary">Sports</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>O</span>
+              <span style={{ display: "inline-block", transform: "scaleX(1.2)" }}>F</span>
+              <span className="inline-block" style={{ width: "0.3em" }} />
+              <span className="text-primary" style={{ display: "inline-block", transform: "scaleX(1.3)", letterSpacing: "0.18em" }}>SPORTS</span>
             </h1>
-            <p className="mt-4 text-muted-foreground text-lg max-w-md mx-auto">
+            <p className="mt-6 text-muted-foreground text-lg max-w-md mx-auto tracking-wide">
               Premium sports equipment for athletes who demand the best.
             </p>
           </motion.div>
