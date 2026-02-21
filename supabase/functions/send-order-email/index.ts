@@ -62,17 +62,19 @@ serve(async (req) => {
         to: [email],
         subject: `Pistanero - ${config.subject}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #f97316; font-size: 24px;">Pistanero</h1>
-            <hr style="border: 1px solid #eee; margin: 20px 0;" />
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #111; color: #fff;">
+            <div style="text-align: center; padding: 20px 0;">
+              <img src="https://knulhygeseazoappsedy.supabase.co/storage/v1/object/public/email-assets/logo.png" alt="Pistanero" style="height: 50px;" />
+            </div>
+            <hr style="border: 1px solid #333; margin: 0 0 20px 0;" />
             <p>Hi <strong>${name}</strong>,</p>
-            <p>${config.message}</p>
-            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin: 20px 0;">
+            <p style="color: #ccc;">${config.message}</p>
+            <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #333;">
               <p style="margin: 4px 0;"><strong>Order:</strong> #${orderId}</p>
-              <p style="margin: 4px 0;"><strong>Status:</strong> ${status.charAt(0).toUpperCase() + status.slice(1)}</p>
+              <p style="margin: 4px 0;"><strong>Status:</strong> <span style="color: #f97316;">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
               <p style="margin: 4px 0;"><strong>Total:</strong> $${total?.toFixed(2) || "0.00"}</p>
             </div>
-            <p style="color: #888; font-size: 12px;">Pistanero - The Home of Sports<br/>Sabagabo, Uganda | 0771699039</p>
+            <p style="color: #666; font-size: 12px; text-align: center;">Pistanero - The Home of Sports<br/>Sabagabo, Uganda | 0771699039</p>
           </div>
         `,
       }),
