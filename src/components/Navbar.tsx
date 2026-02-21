@@ -24,7 +24,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="z-10">
-          <img src={logo} alt="Pistanero" className="h-10 w-auto" />
+          <img src={logo} alt="Pistanero" className="h-10 w-auto brightness-0 invert" />
         </Link>
 
         {/* Desktop Nav */}
