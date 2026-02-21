@@ -31,7 +31,7 @@ const SignInPromptDialog = ({ open, onOpenChange }: SignInPromptDialogProps) => 
           onClick={() => onOpenChange(false)}
           className="block w-full mt-4 py-3 bg-primary text-primary-foreground font-display text-sm uppercase tracking-widest rounded-full hover:bg-primary/90 transition-all text-center"
         >
-          Sign In / Sign Up
+          Sign In with Google Now
         </Link>
       </DialogContent>
     </Dialog>
