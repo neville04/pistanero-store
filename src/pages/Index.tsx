@@ -25,24 +25,25 @@ const HeroCarouselInner = () => {
 
   return (
     <>
-      <AnimatePresence mode="wait">
+      {heroImages.map((src, i) => (
         <motion.img
-          key={current}
-          src={heroImages[current]}
-          alt="Pistanero – The Home of Sports"
+          key={i}
+          src={src}
+          alt="Pista Nero – The Home of Sports"
           className="absolute inset-0 w-full h-full object-cover"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          animate={{
+            opacity: i === current ? 1 : 0,
+            scale: i === current ? 1.05 : 1,
+          }}
+          transition={{ duration: 1.8, ease: "easeInOut" }}
         />
-      </AnimatePresence>
+      ))}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {heroImages.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-2 h-2 rounded-full transition-all ${i === current ? "bg-primary w-6" : "bg-foreground/40"}`}
+            className={`w-2 h-2 rounded-full transition-all duration-500 ${i === current ? "bg-primary w-6" : "bg-foreground/40"}`}
           />
         ))}
       </div>
