@@ -34,28 +34,68 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
-        <div className="absolute inset-0 z-10 px-4 pt-28 md:pt-32 lg:pt-36 flex justify-center">
+        <div className="absolute inset-0 z-10 px-4 pt-24 md:pt-28 lg:pt-32 flex justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center"
           >
+            <motion.div
+              initial={{ scaleX: 0.8, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="inline-block mb-3"
+            >
+              <span
+                className="text-muted-foreground/60 uppercase tracking-[0.4em] text-xs md:text-sm font-medium"
+                style={{ fontFamily: "'Oswald', sans-serif" }}
+              >
+                Welcome to
+              </span>
+            </motion.div>
             <h1
-              className="text-foreground leading-[1.05] uppercase font-bold"
+              className="leading-[0.88] uppercase font-black"
               style={{
                 fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "clamp(3rem, 8vw, 7.5rem)",
-                letterSpacing: "0.06em",
+                fontSize: "clamp(4.5rem, 12vw, 11rem)",
+                letterSpacing: "0.04em",
               }}
             >
-              THE HOME
-              <br />
-              <span className="text-primary">OF SPORTS</span>
+              <span className="text-foreground block">THE</span>
+              <span
+                className="text-foreground block relative"
+                style={{ fontSize: "115%", letterSpacing: "-0.01em" }}
+              >
+                H
+                <span className="relative inline-block">
+                  <span>O</span>
+                  <motion.span
+                    className="absolute -bottom-1 left-0 w-full h-[3px] bg-primary rounded-full"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                  />
+                </span>
+                ME
+              </span>
+              <motion.span
+                className="text-primary block"
+                style={{ fontSize: "105%", letterSpacing: "0.08em" }}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <span className="text-foreground/80" style={{ fontSize: "65%", letterSpacing: "0.15em", verticalAlign: "middle" }}>OF </span>
+                SPORTS
+              </motion.span>
             </h1>
-            <p className="mt-4 text-muted-foreground text-base md:text-lg max-w-md mx-auto tracking-wide">
-              Premium sports equipment for athletes who demand the best.
-            </p>
+            <motion.div
+              className="mt-4 h-[2px] w-16 md:w-24 bg-primary/60 mx-auto rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: "6rem" }}
+              transition={{ duration: 0.6, delay: 1 }}
+            />
           </motion.div>
         </div>
       </div>
