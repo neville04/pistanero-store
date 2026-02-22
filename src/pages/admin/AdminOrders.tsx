@@ -124,7 +124,11 @@ const AdminOrders = () => {
                     <td className="p-4">{order.items.length} items</td>
                     <td className="p-4 text-primary font-bold">${order.total.toFixed(2)}</td>
                     <td className="p-4 font-mono text-xs">{order.transaction_id || "—"}</td>
-                    <td className="p-4 capitalize text-xs">{order.delivery_method}</td>
+                    <td className="p-4 text-xs">
+                      <span className={`capitalize ${order.delivery_method === "safeboda" ? "text-green-400 font-semibold" : ""}`}>
+                        {order.delivery_method === "safeboda" ? "SafeBoda 🏍️" : order.delivery_method}
+                      </span>
+                    </td>
                     <td className="p-4">
                       <select
                         value={order.status}

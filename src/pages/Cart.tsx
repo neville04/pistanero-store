@@ -10,7 +10,6 @@ import Footer from "@/components/Footer";
 
 const PAYMENT_INFO = {
   mtn: { name: "MTN MOMO", code: "0771699039", color: "#FFCC00" },
-  airtel: { name: "Airtel Money", code: "0771699039", color: "#ED1C24" },
 };
 
 const Cart = () => {
@@ -19,7 +18,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<"cart" | "checkout">("cart");
   const [transactionId, setTransactionId] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">("pickup");
+  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery" | "safeboda">("pickup");
   const [submitting, setSubmitting] = useState(false);
 
   const handleProceedToCheckout = () => {
@@ -188,7 +187,7 @@ const Cart = () => {
               {/* Delivery Method */}
               <div className="glass-card p-6">
                 <h3 className="font-display text-lg font-semibold mb-3">Delivery Method</h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={() => setDeliveryMethod("pickup")}
                     className={`p-4 rounded-lg border-2 text-center transition-all ${
@@ -211,7 +210,23 @@ const Cart = () => {
                     <span className="font-display text-sm font-semibold block">Delivery</span>
                     <span className="text-xs text-muted-foreground">We deliver to you</span>
                   </button>
+                  <button
+                    onClick={() => setDeliveryMethod("safeboda")}
+                    className={`p-4 rounded-lg border-2 text-center transition-all ${
+                      deliveryMethod === "safeboda"
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="font-display text-sm font-semibold block">SafeBoda</span>
+                    <span className="text-xs text-muted-foreground">Via SafeBoda rider</span>
+                  </button>
                 </div>
+                {deliveryMethod === "safeboda" && (
+                  <p className="text-xs text-yellow-400 mt-3 bg-yellow-400/10 p-3 rounded-lg">
+                    ⚠️ Delivery charges are independent of the order total and will be communicated separately.
+                  </p>
+                )}
               </div>
 
               {/* Payment Instructions */}
@@ -224,21 +239,13 @@ const Cart = () => {
                   Send <span className="text-primary font-bold">${totalPrice.toFixed(2)}</span> to one of the numbers below, then enter your transaction ID.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                  <div className="p-4 rounded-lg border border-border bg-secondary/30">
+                <div className="mb-6">
+                  <div className="p-4 rounded-lg border border-border bg-secondary/30 max-w-sm">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: PAYMENT_INFO.mtn.color }} />
                       <span className="font-display text-sm font-semibold">{PAYMENT_INFO.mtn.name}</span>
                     </div>
                     <p className="text-lg font-bold font-mono">{PAYMENT_INFO.mtn.code}</p>
-                    <p className="text-xs text-muted-foreground mt-1">Business Name: Pistanero</p>
-                  </div>
-                  <div className="p-4 rounded-lg border border-border bg-secondary/30">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: PAYMENT_INFO.airtel.color }} />
-                      <span className="font-display text-sm font-semibold">{PAYMENT_INFO.airtel.name}</span>
-                    </div>
-                    <p className="text-lg font-bold font-mono">{PAYMENT_INFO.airtel.code}</p>
                     <p className="text-xs text-muted-foreground mt-1">Business Name: Pistanero</p>
                   </div>
                 </div>
