@@ -26,9 +26,14 @@ const Courts = () => {
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-primary" /> Open 6:00 AM – 10:00 PM Daily
             </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-primary" /> Pista Nero Sports Complex
-            </span>
+            <a
+              href="https://maps.apple.com/place?address=Mutungo,%20Ssabagabo,%20Uganda&auid=15265011981223942931&coordinate=0.202020,32.562229&lsp=6489&name=Mutungo&map=explore"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 hover:text-primary transition-colors"
+            >
+              <MapPin className="w-4 h-4 text-primary" /> Mutungo, Ssabagabo, Uganda
+            </a>
             <span className="flex items-center gap-1.5">
               <Phone className="w-4 h-4 text-primary" /> +256 700 000 000
             </span>
