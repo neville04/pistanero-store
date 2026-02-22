@@ -35,7 +35,7 @@ const Courts = () => {
               <MapPin className="w-4 h-4 text-primary" /> Mutungo, Ssabagabo, Uganda
             </a>
             <span className="flex items-center gap-1.5">
-              <Phone className="w-4 h-4 text-primary" /> +256 700 000 000
+              <Phone className="w-4 h-4 text-primary" /> 0771699039
             </span>
           </div>
 
