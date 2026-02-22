@@ -18,7 +18,8 @@ const Cart = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<"cart" | "checkout">("cart");
   const [transactionId, setTransactionId] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery" | "safeboda">("pickup");
+  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">("pickup");
+  const [useSafeboda, setUseSafeboda] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleProceedToCheckout = () => {
@@ -45,7 +46,7 @@ const Cart = () => {
         total: totalPrice,
         status: "pending",
         transaction_id: transactionId.trim(),
-        delivery_method: deliveryMethod,
+        delivery_method: deliveryMethod === "delivery" && useSafeboda ? "safeboda" : deliveryMethod,
         customer_name: user.user_metadata?.full_name || "",
         customer_email: user.email || "",
         phone: user.user_metadata?.phone || "",
@@ -187,9 +188,9 @@ const Cart = () => {
               {/* Delivery Method */}
               <div className="glass-card p-6">
                 <h3 className="font-display text-lg font-semibold mb-3">Delivery Method</h3>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <button
-                    onClick={() => setDeliveryMethod("pickup")}
+                    onClick={() => { setDeliveryMethod("pickup"); setUseSafeboda(false); }}
                     className={`p-4 rounded-lg border-2 text-center transition-all ${
                       deliveryMethod === "pickup"
                         ? "border-primary bg-primary/10"
@@ -210,22 +211,27 @@ const Cart = () => {
                     <span className="font-display text-sm font-semibold block">Delivery</span>
                     <span className="text-xs text-muted-foreground">We deliver to you</span>
                   </button>
-                  <button
-                    onClick={() => setDeliveryMethod("safeboda")}
-                    className={`p-4 rounded-lg border-2 text-center transition-all ${
-                      deliveryMethod === "safeboda"
-                        ? "border-primary bg-primary/10"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <span className="font-display text-sm font-semibold block">SafeBoda</span>
-                    <span className="text-xs text-muted-foreground">Via SafeBoda rider</span>
-                  </button>
                 </div>
-                {deliveryMethod === "safeboda" && (
-                  <p className="text-xs text-yellow-400 mt-3 bg-yellow-400/10 p-3 rounded-lg">
-                    ⚠️ Delivery charges are independent of the order total and will be communicated separately.
-                  </p>
+                {deliveryMethod === "delivery" && (
+                  <div className="mt-4 space-y-3">
+                    <label className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary/50 cursor-pointer transition-all">
+                      <input
+                        type="checkbox"
+                        checked={useSafeboda}
+                        onChange={(e) => setUseSafeboda(e.target.checked)}
+                        className="w-4 h-4 accent-primary"
+                      />
+                      <div>
+                        <span className="font-display text-sm font-semibold">Use SafeBoda 🏍️</span>
+                        <span className="text-xs text-muted-foreground block">Deliver via SafeBoda rider</span>
+                      </div>
+                    </label>
+                    {useSafeboda && (
+                      <p className="text-xs text-yellow-400 bg-yellow-400/10 p-3 rounded-lg">
+                        ⚠️ Delivery charges are independent of the order total and will be communicated separately.
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
 
