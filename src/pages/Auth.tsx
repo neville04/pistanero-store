@@ -59,7 +59,7 @@ const Auth = () => {
           className="glass-card p-8 w-full max-w-md"
         >
           <h1 className="font-display text-3xl font-bold text-center mb-2">
-            {isLogin ? "Welcome Back" : "Join"}{" "}
+            {isLogin ? "Welcome Back to" : "Join"}{" "}
             <span className="text-primary">Pistanero</span>
           </h1>
           <p className="text-muted-foreground text-center text-sm mb-8">

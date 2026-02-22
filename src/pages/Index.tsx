@@ -151,13 +151,13 @@ const Index = () => {
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0.1 }}
                   transition={{ delay: i * 0.1 }}
-                  className="glass-card p-6 flex flex-col hover-glow group"
+                  className="glass-card p-6 flex flex-col hover-glow group will-change-transform"
                 >
                   <div className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30">
                     {product.image_urls.length > 0 ? (
-                      <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-contain" />
+                      <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-contain" loading="lazy" />
                     ) : (
                       <span className="text-muted-foreground text-xs font-display uppercase tracking-widest">
                         {product.category}

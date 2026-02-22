@@ -16,15 +16,19 @@ const WelcomeDialog = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (user && !localStorage.getItem(WELCOME_KEY)) {
-      // Small delay so the page loads first
-      const t = setTimeout(() => setOpen(true), 800);
-      return () => clearTimeout(t);
+    if (user) {
+      const key = `${WELCOME_KEY}_${user.id}`;
+      if (!localStorage.getItem(key)) {
+        const t = setTimeout(() => setOpen(true), 800);
+        return () => clearTimeout(t);
+      }
     }
   }, [user]);
 
   const handleClose = () => {
-    localStorage.setItem(WELCOME_KEY, "true");
+    if (user) {
+      localStorage.setItem(`${WELCOME_KEY}_${user.id}`, "true");
+    }
     setOpen(false);
   };
 
