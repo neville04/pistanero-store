@@ -13,7 +13,8 @@ const statusMessages: Record<string, { subject: string; message: string }> = {
   },
   processing: {
     subject: "Payment Verified - Order Processing",
-    message: "Your payment has been verified! Your order is now being processed and will be ready for pickup/delivery soon.",
+    message:
+      "Your payment has been verified! Your order is now being processed and will be ready for pickup/delivery soon.",
   },
   delivered: {
     subject: "Order Delivered",
@@ -58,7 +59,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Pistanero <orders@pistanero.com>",
+        from: "Pistanero <orders@pistanero.store>",
         to: [email],
         subject: `Pistanero - ${config.subject}`,
         html: `
