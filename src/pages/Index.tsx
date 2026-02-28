@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage1 from "@/assets/hero-slide-1.jpg";
@@ -63,30 +63,69 @@ const HeroCarouselInner = () => {
   );
 };
 
+/* ── Single event card ── */
+const EventCard = ({ ev }: { ev: EventItem }) => (
+  <div
+    className="shrink-0 w-[360px] rounded-2xl overflow-hidden bg-card border border-border/40 group hover:border-primary/40 transition-colors flex flex-col"
+    style={{ height: 420 }}
+  >
+    <div className="relative h-56 overflow-hidden shrink-0">
+      {ev.image_url ? (
+        <img
+          src={ev.image_url}
+          alt={ev.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          draggable={false}
+        />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-primary/30 to-secondary" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+    </div>
+    <div className="p-5 flex flex-col flex-1">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs bg-primary/15 text-primary px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wide">
+          {ev.tag}
+        </span>
+        <span className="text-xs text-muted-foreground">{ev.date_label}</span>
+      </div>
+      <h3 className="font-display text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-2">
+        {ev.title}
+      </h3>
+      {ev.excerpt && (
+        <p className="text-muted-foreground text-sm line-clamp-3 flex-1">{ev.excerpt}</p>
+      )}
+    </div>
+  </div>
+);
+
+/* ── Events carousel / static grid ── */
 const EventsCarousel = ({ events }: { events: EventItem[] }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number>(0);
-  const speedRef = useRef(0.6); // px per frame — auto-scroll speed
   const pausedRef = useRef(false);
 
-  // Duplicate cards for seamless loop
-  const cards = events.length > 0 ? [...events, ...events] : [];
+  // Only loop when there are more than 3 events
+  const shouldLoop = events.length > 3;
+
+  // Duplicate only when looping; otherwise use original list
+  const cards = shouldLoop ? [...events, ...events] : events;
 
   const scroll = useCallback((dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollLeft += dir * 320;
+    el.scrollLeft += dir * 380;
   }, []);
 
-  // Seamless loop reset
   useEffect(() => {
+    if (!shouldLoop) return;
     const el = trackRef.current;
-    if (!el || events.length === 0) return;
+    if (!el) return;
 
     const step = () => {
       if (!pausedRef.current && el) {
-        el.scrollLeft += speedRef.current;
-        // When we've scrolled past the first half, jump back silently
+        el.scrollLeft += 0.6;
+        // Seamless jump: once we've scrolled the first half, reset silently
         const half = el.scrollWidth / 2;
         if (el.scrollLeft >= half) {
           el.scrollLeft -= half;
@@ -97,14 +136,27 @@ const EventsCarousel = ({ events }: { events: EventItem[] }) => {
 
     animFrameRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [events]);
+  }, [shouldLoop, events]);
+
+  const SectionHeader = () => (
+    <div className="px-4 max-w-6xl mx-auto mb-10">
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
+        <h2 className="font-display text-3xl md:text-4xl font-bold">
+          Events &amp; <span className="text-primary">More</span>
+        </h2>
+      </motion.div>
+    </div>
+  );
 
   if (events.length === 0) {
     return (
       <section className="py-20 px-4 bg-secondary/20 border-y border-border/40">
         <div className="max-w-6xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Events &amp; <span className="text-primary">More</span></h2>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
+            Events &amp; <span className="text-primary">More</span>
+          </h2>
           <p className="text-muted-foreground text-sm">No events posted yet. Check back soon!</p>
         </div>
       </section>
@@ -113,83 +165,50 @@ const EventsCarousel = ({ events }: { events: EventItem[] }) => {
 
   return (
     <section className="py-20 bg-secondary/20 border-y border-border/40 overflow-hidden">
-      {/* Header */}
-      <div className="px-4 max-w-6xl mx-auto mb-10">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold">
-            Events &amp; <span className="text-primary">More</span>
-          </h2>
-        </motion.div>
-      </div>
+      <SectionHeader />
 
-      {/* Carousel row */}
       <div className="relative">
-        {/* Left arrow */}
-        <button
-          onClick={() => scroll(-1)}
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-
-        {/* Right arrow */}
-        <button
-          onClick={() => scroll(1)}
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        {/* Gradient fades on edges */}
-        <div className="pointer-events-none absolute left-0 top-0 h-full w-20 z-10 bg-gradient-to-r from-secondary/20 to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 bg-gradient-to-l from-secondary/20 to-transparent" />
-
-        {/* Scrollable track */}
-        <div
-          ref={trackRef}
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-          className="flex gap-5 overflow-x-hidden px-14 cursor-grab active:cursor-grabbing select-none"
-          style={{ scrollBehavior: "auto" }}
-        >
-          {cards.map((ev, i) => (
-            <div
-              key={`${ev.id}-${i}`}
-              className="shrink-0 w-72 rounded-2xl overflow-hidden bg-card border border-border/40 group hover:border-primary/40 transition-colors flex flex-col"
-              style={{ height: 340 }}
+        {/* Arrows + edge fades — only when looping */}
+        {shouldLoop && (
+          <>
+            <button
+              onClick={() => scroll(-1)}
+              onMouseEnter={() => { pausedRef.current = true; }}
+              onMouseLeave={() => { pausedRef.current = false; }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
             >
-              {/* Image */}
-              <div className="relative h-44 overflow-hidden shrink-0">
-                {ev.image_url ? (
-                  <img
-                    src={ev.image_url}
-                    alt={ev.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/30 to-secondary" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              </div>
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scroll(1)}
+              onMouseEnter={() => { pausedRef.current = true; }}
+              onMouseLeave={() => { pausedRef.current = false; }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-20 z-10 bg-gradient-to-r from-secondary/20 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 bg-gradient-to-l from-secondary/20 to-transparent" />
+          </>
+        )}
 
-              {/* Content */}
-              <div className="p-4 flex flex-col flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide">{ev.tag}</span>
-                  <span className="text-xs text-muted-foreground">{ev.date_label}</span>
-                </div>
-                <h3 className="font-display text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1">{ev.title}</h3>
-                {ev.excerpt && <p className="text-muted-foreground text-xs line-clamp-3 flex-1">{ev.excerpt}</p>}
-              </div>
-            </div>
-          ))}
-        </div>
+        {shouldLoop ? (
+          /* Auto-scrolling looping track */
+          <div
+            ref={trackRef}
+            onMouseEnter={() => { pausedRef.current = true; }}
+            onMouseLeave={() => { pausedRef.current = false; }}
+            className="flex gap-5 overflow-x-hidden px-14 select-none"
+            style={{ scrollBehavior: "auto" }}
+          >
+            {cards.map((ev, i) => <EventCard key={`${ev.id}-${i}`} ev={ev} />)}
+          </div>
+        ) : (
+          /* Static centered row — no duplication, no loop */
+          <div className="flex gap-5 justify-center flex-wrap px-6">
+            {cards.map((ev) => <EventCard key={ev.id} ev={ev} />)}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -282,7 +301,7 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Events & More — looping carousel */}
+      {/* Events & More */}
       <EventsCarousel events={events} />
 
       {/* Featured Products */}
@@ -338,8 +357,6 @@ const Index = () => {
           )}
         </div>
       </section>
-
-
 
       <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
       <Footer />
