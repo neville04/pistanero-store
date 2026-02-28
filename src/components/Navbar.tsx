@@ -31,7 +31,7 @@ const navLinks = [
   },
   {
     to: "/wellness",
-    label: "Wellness & Fitness",
+    label: "Fitness",
     children: [
       { to: "/wellness/running-club", label: "Running Club Sessions" },
       { to: "/wellness/fitness-classes", label: "Fitness Classes" },
@@ -46,26 +46,14 @@ const navLinks = [
     ],
   },
   {
-    to: "/apparel",
-    label: "Apparel",
+    to: "#",
+    label: "More",
     children: [
-      { to: "/men", label: "Men" },
-      { to: "/women", label: "Women" },
-      { to: "/bags", label: "Bags" },
-      { to: "/products?category=Rackets", label: "Rackets" },
-      { to: "/products?category=Balls", label: "Balls" },
-      { to: "/products?category=Accessories", label: "Accessories" },
+      { to: "/apparel", label: "Apparel" },
+      { to: "/membership", label: "Membership" },
+      { to: "/contact", label: "Contact" },
     ],
   },
-  {
-    to: "/membership",
-    label: "Membership",
-    children: [
-      { to: "/membership/monthly", label: "Monthly" },
-      { to: "/membership/annual", label: "Annual" },
-    ],
-  },
-  { to: "/contact", label: "Contact" },
 ];
 
 const Navbar = () => {

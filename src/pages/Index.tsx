@@ -133,8 +133,48 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Featured Products */}
+      {/* Events & More */}
       <section className="-mt-32 relative z-10 pt-4 pb-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">
+              Events &amp; <span className="text-primary">More</span>
+            </h2>
+            <p className="text-muted-foreground">News, events, and stories from Pista Nero.</p>
+          </motion.div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { tag: "Announcement", title: "Basketball Court Now Open", date: "Feb 2026", excerpt: "We're excited to announce the opening of our full-size outdoor basketball court — now available for individual and team bookings." },
+              { tag: "Programme", title: "Youth Tennis Development Launches", date: "Feb 2026", excerpt: "Our certified coaches are now enrolling young players aged 6–18 in our Tennis Youth Development Programme. Limited spots available." },
+              { tag: "Community", title: "Saturday Running Club", date: "Ongoing", excerpt: "Join our growing community of runners every Saturday morning. All paces welcome — come for the run, stay for the good vibes." },
+            ].map((post, i) => (
+              <motion.div
+                key={post.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ delay: i * 0.1 }}
+                className="glass-card p-6 flex flex-col hover-glow group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">{post.tag}</span>
+                  <span className="text-xs text-muted-foreground">{post.date}</span>
+                </div>
+                <h3 className="font-display text-base font-bold mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
+                <p className="text-muted-foreground text-sm flex-1">{post.excerpt}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-20 px-4 bg-secondary/10">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-2">
             Featured <span className="text-primary">Products</span>
@@ -187,65 +227,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Events & More */}
-      <section className="py-20 px-4 bg-secondary/10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">
-              Events &amp; <span className="text-primary">More</span>
-            </h2>
-            <p className="text-muted-foreground">News, events, and stories from Pista Nero.</p>
-          </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                tag: "Announcement",
-                title: "Basketball Court Now Open",
-                date: "Feb 2026",
-                excerpt: "We're excited to announce the opening of our full-size outdoor basketball court — now available for individual and team bookings.",
-              },
-              {
-                tag: "Programme",
-                title: "Youth Tennis Development Launches",
-                date: "Feb 2026",
-                excerpt: "Our certified coaches are now enrolling young players aged 6–18 in our Tennis Youth Development Programme. Limited spots available.",
-              },
-              {
-                tag: "Community",
-                title: "Saturday Running Club",
-                date: "Ongoing",
-                excerpt: "Join our growing community of runners every Saturday morning. All paces welcome — come for the run, stay for the good vibes.",
-              },
-            ].map((post, i) => (
-              <motion.div
-                key={post.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-card p-6 flex flex-col hover-glow group"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">
-                    {post.tag}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{post.date}</span>
-                </div>
-                <h3 className="font-display text-base font-bold mb-2 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground text-sm flex-1">{post.excerpt}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
       <Footer />
