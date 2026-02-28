@@ -43,7 +43,10 @@ const AdminDashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
 
     const checkAdmin = async () => {
       const { data } = await supabase
@@ -53,14 +56,15 @@ const AdminDashboard = () => {
         .eq("role", "admin")
         .maybeSingle();
 
-      if (!data) { toast.error("Access denied"); navigate("/"); return; }
+      if (!data) {
+        toast.error("Access denied");
+        navigate("/");
+        return;
+      }
 
       setIsAdmin(true);
 
-      const { data: ordersData } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data: ordersData } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
 
       if (ordersData) {
         setOrders(ordersData.map((o: any) => ({ ...o, items: o.items as OrderItem[] })));
@@ -73,16 +77,14 @@ const AdminDashboard = () => {
 
   const updateStatus = async (orderId: string, newStatus: string) => {
     const order = orders.find((o) => o.id === orderId);
-    const { error } = await supabase
-      .from("orders")
-      .update({ status: newStatus })
-      .eq("id", orderId);
+    const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
 
-    if (error) { toast.error("Failed to update"); return; }
+    if (error) {
+      toast.error("Failed to update");
+      return;
+    }
 
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-    );
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
 
     // Trigger email notification
     if (order?.customer_email) {
@@ -141,7 +143,7 @@ const AdminDashboard = () => {
           </div>
           <div className="glass-card p-5 text-center">
             <DollarSign className="w-6 h-6 mx-auto mb-2 text-green-400" />
-            <p className="text-2xl font-bold">${totalSales.toFixed(2)}</p>
+            <p className="text-2xl font-bold">UGX{totalSales.toFixed(2)}</p>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Sales</p>
           </div>
           <div className="glass-card p-5 text-center">
@@ -167,14 +169,30 @@ const AdminDashboard = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Order</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Customer</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Date</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Items</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Total</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">TxID</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Delivery</th>
-                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Status</th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Order
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Customer
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Date
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Items
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Total
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    TxID
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Delivery
+                  </th>
+                  <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -188,11 +206,9 @@ const AdminDashboard = () => {
                         <p className="text-xs text-muted-foreground">{order.customer_email || ""}</p>
                         {order.phone && <p className="text-xs text-muted-foreground">{order.phone}</p>}
                       </td>
-                      <td className="p-4 text-muted-foreground">
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </td>
+                      <td className="p-4 text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</td>
                       <td className="p-4">{order.items.length} items</td>
-                      <td className="p-4 text-primary font-bold">${order.total.toFixed(2)}</td>
+                      <td className="p-4 text-primary font-bold">UGX{order.total.toFixed(2)}</td>
                       <td className="p-4 font-mono text-xs">{order.transaction_id || "—"}</td>
                       <td className="p-4 capitalize text-xs">{order.delivery_method}</td>
                       <td className="p-4">
@@ -214,9 +230,7 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
-          {orders.length === 0 && (
-            <p className="text-center text-muted-foreground py-12">No orders yet.</p>
-          )}
+          {orders.length === 0 && <p className="text-center text-muted-foreground py-12">No orders yet.</p>}
         </div>
       </div>
     </div>
