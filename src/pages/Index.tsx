@@ -134,7 +134,7 @@ const Index = () => {
       </div>
 
       {/* Events & More */}
-      <section className="py-20 px-4 border-t border-border/30">
+      <section className="py-20 px-4 bg-secondary/20 border-y border-border/40">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
