@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      events: {
+        Row: {
+          created_at: string
+          date_label: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          tag: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_label?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          tag?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_label?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          tag?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string

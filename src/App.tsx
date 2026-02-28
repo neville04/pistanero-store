@@ -21,6 +21,7 @@ import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminEvents from "./pages/admin/AdminEvents";
 import AdminSales from "./pages/admin/AdminSales";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -67,6 +68,7 @@ const AppRoutes = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminHome />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="events" element={<AdminEvents />} />
           <Route path="sales" element={<AdminSales />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />

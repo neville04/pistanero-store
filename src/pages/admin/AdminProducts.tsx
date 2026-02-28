@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Plus, Trash2, ImagePlus, X } from "lucide-react";
+import { Loader2, Plus, Trash2, ImagePlus, X, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form state
   const [name, setName] = useState("");
@@ -90,6 +91,16 @@ const AdminProducts = () => {
     setName(""); setPrice(""); setCategory("Footwear"); setSection("men");
     setDescription(""); setColor(""); setSize(""); setIsFeatured(false);
     setImageUrls([]); setImageUrl("");
+    setEditingId(null);
+  };
+
+  const startEdit = (p: ProductRow) => {
+    setName(p.name); setPrice(String(p.price)); setCategory(p.category); setSection(p.section);
+    setDescription(p.description || ""); setColor(p.color || ""); setSize(p.size || "");
+    setIsFeatured(p.is_featured); setImageUrls(p.image_urls); setImageUrl("");
+    setEditingId(p.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,7 +108,7 @@ const AdminProducts = () => {
     if (!name.trim() || !price) { toast.error("Name and price are required"); return; }
     setSubmitting(true);
 
-    const { data, error } = await supabase.from("products").insert({
+    const payload = {
       name: name.trim(),
       price: parseFloat(price),
       category,
@@ -107,11 +118,20 @@ const AdminProducts = () => {
       size: size.trim() || null,
       image_urls: imageUrls,
       is_featured: isFeatured,
-    }).select().single();
+    };
 
-    if (error) { toast.error("Failed to add product"); setSubmitting(false); return; }
-    setProducts((prev) => [data as unknown as ProductRow, ...prev]);
-    toast.success("Product added!");
+    if (editingId) {
+      const { data, error } = await supabase.from("products").update(payload).eq("id", editingId).select().single();
+      if (error) { toast.error("Failed to update product"); setSubmitting(false); return; }
+      setProducts((prev) => prev.map((p) => p.id === editingId ? data as unknown as ProductRow : p));
+      toast.success("Product updated!");
+    } else {
+      const { data, error } = await supabase.from("products").insert(payload).select().single();
+      if (error) { toast.error("Failed to add product"); setSubmitting(false); return; }
+      setProducts((prev) => [data as unknown as ProductRow, ...prev]);
+      toast.success("Product added!");
+    }
+
     resetForm();
     setShowForm(false);
     setSubmitting(false);
@@ -141,7 +161,7 @@ const AdminProducts = () => {
           Product <span className="text-primary">Management</span>
         </h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -158,6 +178,7 @@ const AdminProducts = () => {
           onSubmit={handleSubmit}
           className="glass-card p-6 mb-8 space-y-5"
         >
+          <h2 className="font-display text-lg font-semibold">{editingId ? "Edit Product" : "New Product"}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Section *</Label>
@@ -266,7 +287,7 @@ const AdminProducts = () => {
               disabled={submitting}
               className="px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {submitting ? "Saving..." : "Save Product"}
+              {submitting ? "Saving..." : editingId ? "Update Product" : "Save Product"}
             </button>
             <button
               type="button"
@@ -313,9 +334,14 @@ const AdminProducts = () => {
                     <Switch checked={p.is_featured} onCheckedChange={() => toggleFeatured(p.id, p.is_featured)} />
                   </td>
                   <td className="p-4">
-                    <button onClick={() => deleteProduct(p.id)} className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button onClick={() => startEdit(p)} className="p-2 rounded-lg text-primary hover:bg-primary/10 transition-colors">
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => deleteProduct(p.id)} className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
