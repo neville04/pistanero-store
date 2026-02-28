@@ -11,6 +11,9 @@ import Index from "./pages/Index";
 import Products from "./pages/Products";
 import SectionProducts from "./pages/SectionProducts";
 import Courts from "./pages/Courts";
+import Membership from "./pages/Membership";
+import Wellness from "./pages/Wellness";
+import Skills from "./pages/Skills";
 import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -41,7 +44,20 @@ const AppRoutes = () => {
         <Route path="/men" element={<SectionProducts section="men" title="Men's Collection" subtitle="Performance gear built for the modern athlete." />} />
         <Route path="/women" element={<SectionProducts section="women" title="Women's Collection" subtitle="Stylish and functional sportswear for every game." />} />
         <Route path="/bags" element={<SectionProducts section="bags" title="Bags & Carriers" subtitle="Carry your gear in style – from court to street." />} />
+        <Route path="/apparel" element={<Products />} />
+        {/* Courts */}
         <Route path="/courts" element={<Courts />} />
+        <Route path="/courts/:sport" element={<Courts />} />
+        {/* Membership */}
+        <Route path="/membership" element={<Membership />} />
+        <Route path="/membership/:type" element={<Membership />} />
+        {/* Wellness */}
+        <Route path="/wellness" element={<Wellness />} />
+        <Route path="/wellness/:type" element={<Wellness />} />
+        {/* Skills */}
+        <Route path="/skills" element={<Skills />} />
+        <Route path="/skills/:type" element={<Skills />} />
+        {/* Other */}
         <Route path="/cart" element={<Cart />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
