@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage1 from "@/assets/hero-slide-1.jpg";
 import heroImage2 from "@/assets/hero-slide-2.jpg";
 import heroImage3 from "@/assets/hero-slide-3.jpg";
@@ -60,6 +60,138 @@ const HeroCarouselInner = () => {
         ))}
       </div>
     </>
+  );
+};
+
+const EventsCarousel = ({ events }: { events: EventItem[] }) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number>(0);
+  const speedRef = useRef(0.6); // px per frame — auto-scroll speed
+  const pausedRef = useRef(false);
+
+  // Duplicate cards for seamless loop
+  const cards = events.length > 0 ? [...events, ...events] : [];
+
+  const scroll = useCallback((dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollLeft += dir * 320;
+  }, []);
+
+  // Seamless loop reset
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el || events.length === 0) return;
+
+    const step = () => {
+      if (!pausedRef.current && el) {
+        el.scrollLeft += speedRef.current;
+        // When we've scrolled past the first half, jump back silently
+        const half = el.scrollWidth / 2;
+        if (el.scrollLeft >= half) {
+          el.scrollLeft -= half;
+        }
+      }
+      animFrameRef.current = requestAnimationFrame(step);
+    };
+
+    animFrameRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [events]);
+
+  if (events.length === 0) {
+    return (
+      <section className="py-20 px-4 bg-secondary/20 border-y border-border/40">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Events &amp; <span className="text-primary">More</span></h2>
+          <p className="text-muted-foreground text-sm">No events posted yet. Check back soon!</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-20 bg-secondary/20 border-y border-border/40 overflow-hidden">
+      {/* Header */}
+      <div className="px-4 max-w-6xl mx-auto mb-10">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold">
+            Events &amp; <span className="text-primary">More</span>
+          </h2>
+        </motion.div>
+      </div>
+
+      {/* Carousel row */}
+      <div className="relative">
+        {/* Left arrow */}
+        <button
+          onClick={() => scroll(-1)}
+          onMouseEnter={() => { pausedRef.current = true; }}
+          onMouseLeave={() => { pausedRef.current = false; }}
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        {/* Right arrow */}
+        <button
+          onClick={() => scroll(1)}
+          onMouseEnter={() => { pausedRef.current = true; }}
+          onMouseLeave={() => { pausedRef.current = false; }}
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-background/80 border border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-lg"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+
+        {/* Gradient fades on edges */}
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-20 z-10 bg-gradient-to-r from-secondary/20 to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 bg-gradient-to-l from-secondary/20 to-transparent" />
+
+        {/* Scrollable track */}
+        <div
+          ref={trackRef}
+          onMouseEnter={() => { pausedRef.current = true; }}
+          onMouseLeave={() => { pausedRef.current = false; }}
+          className="flex gap-5 overflow-x-hidden px-14 cursor-grab active:cursor-grabbing select-none"
+          style={{ scrollBehavior: "auto" }}
+        >
+          {cards.map((ev, i) => (
+            <div
+              key={`${ev.id}-${i}`}
+              className="shrink-0 w-72 rounded-2xl overflow-hidden bg-card border border-border/40 group hover:border-primary/40 transition-colors flex flex-col"
+              style={{ height: 340 }}
+            >
+              {/* Image */}
+              <div className="relative h-44 overflow-hidden shrink-0">
+                {ev.image_url ? (
+                  <img
+                    src={ev.image_url}
+                    alt={ev.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    draggable={false}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/30 to-secondary" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide">{ev.tag}</span>
+                  <span className="text-xs text-muted-foreground">{ev.date_label}</span>
+                </div>
+                <h3 className="font-display text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 mb-1">{ev.title}</h3>
+                {ev.excerpt && <p className="text-muted-foreground text-xs line-clamp-3 flex-1">{ev.excerpt}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 
@@ -150,120 +282,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Events & More */}
-      <section className="py-20 px-4 bg-secondary/20 border-y border-border/40">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <p className="text-xs uppercase tracking-widest text-primary font-display mb-2">What's happening</p>
-            <h2 className="font-display text-3xl md:text-4xl font-bold">
-              Events &amp; <span className="text-primary">More</span>
-            </h2>
-          </motion.div>
-
-          {events.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No events posted yet. Check back soon!</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-              {/* Hero event card — first item takes big space */}
-              {events[0] && (
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  className="md:col-span-7 relative rounded-2xl overflow-hidden group min-h-[360px] flex flex-col justify-end"
-                >
-                  {events[0].image_url ? (
-                    <img
-                      src={events[0].image_url}
-                      alt={events[0].title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  <div className="relative z-10 p-7">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-semibold uppercase tracking-wider">{events[0].tag}</span>
-                      <span className="text-xs text-white/70">{events[0].date_label}</span>
-                    </div>
-                    <h3 className="font-display text-2xl font-bold text-white mb-2 leading-tight">{events[0].title}</h3>
-                    {events[0].excerpt && <p className="text-white/75 text-sm line-clamp-2">{events[0].excerpt}</p>}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Right column — stacked smaller cards */}
-              <div className="md:col-span-5 flex flex-col gap-5">
-                {events.slice(1, 4).map((ev, i) => (
-                  <motion.div
-                    key={ev.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 + 0.15 }}
-                    className="flex gap-4 rounded-2xl overflow-hidden bg-card border border-border/40 group hover:border-primary/40 transition-colors"
-                  >
-                    <div className="w-28 shrink-0 relative overflow-hidden">
-                      {ev.image_url ? (
-                        <img
-                          src={ev.image_url}
-                          alt={ev.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary min-h-[100px]" />
-                      )}
-                    </div>
-                    <div className="py-4 pr-4 flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded-full font-medium">{ev.tag}</span>
-                        <span className="text-xs text-muted-foreground">{ev.date_label}</span>
-                      </div>
-                      <h3 className="font-display text-sm font-bold mb-1 group-hover:text-primary transition-colors leading-snug">{ev.title}</h3>
-                      {ev.excerpt && <p className="text-muted-foreground text-xs line-clamp-2">{ev.excerpt}</p>}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Extra row — horizontal scroll on mobile, grid on desktop */}
-              {events.length > 4 && (
-                <div className="md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {events.slice(4).map((ev, i) => (
-                    <motion.div
-                      key={ev.id}
-                      initial={{ opacity: 0, y: 16 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.08 }}
-                      className="rounded-xl overflow-hidden bg-card border border-border/40 group hover:border-primary/40 transition-colors"
-                    >
-                      <div className="h-32 overflow-hidden">
-                        {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary" />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded-full font-medium">{ev.tag}</span>
-                        <h3 className="font-display text-xs font-bold mt-2 group-hover:text-primary transition-colors line-clamp-2">{ev.title}</h3>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Events & More — looping carousel */}
+      <EventsCarousel events={events} />
 
       {/* Featured Products */}
       <section className="py-20 px-4 bg-secondary/10">
