@@ -79,18 +79,20 @@ const AdminOrders = () => {
 
     if (order?.customer_email) {
       try {
-        await supabase.functions.invoke("send-order-status-email", {
-          // ✅ Fixed name
-          body: {
+        const { error: fnError } = await supabase.functions.invoke("send-order-email", {
+          body: JSON.stringify({
             email: order.customer_email,
             name: order.customer_name || "Customer",
             orderId: orderId.slice(0, 8),
             status: newStatus,
             total: order.total,
-          },
+          }),
         });
-      } catch {
-        /* best-effort */
+        if (fnError) {
+          console.error("Email function error:", fnError);
+        }
+      } catch (err) {
+        console.error("Failed to send email:", err);
       }
     }
 
