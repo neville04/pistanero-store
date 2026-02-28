@@ -42,17 +42,24 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) { navigate("/admin-login"); return; }
+    if (!user) {
+      navigate("/admin-login");
+      return;
+    }
 
     const load = async () => {
       const { data: roleData } = await supabase
-        .from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-      if (!roleData) { navigate("/"); return; }
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!roleData) {
+        navigate("/");
+        return;
+      }
 
-      const { data } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
 
       if (data) setOrders(data.map((o: any) => ({ ...o, items: o.items as OrderItem[] })));
       setLoading(false);
@@ -63,13 +70,17 @@ const AdminOrders = () => {
   const updateStatus = async (orderId: string, newStatus: string) => {
     const order = orders.find((o) => o.id === orderId);
     const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
-    if (error) { toast.error("Failed to update"); return; }
+    if (error) {
+      toast.error("Failed to update");
+      return;
+    }
 
     setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
 
     if (order?.customer_email) {
       try {
-        await supabase.functions.invoke("send-order-email", {
+        await supabase.functions.invoke("send-order-status-email", {
+          // ✅ Fixed name
           body: {
             email: order.customer_email,
             name: order.customer_name || "Customer",
@@ -78,14 +89,20 @@ const AdminOrders = () => {
             total: order.total,
           },
         });
-      } catch { /* best-effort */ }
+      } catch {
+        /* best-effort */
+      }
     }
 
     toast.success(`Order status updated to ${newStatus}`);
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -99,14 +116,30 @@ const AdminOrders = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Order</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Customer</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Date</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Items</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Total</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">TxID</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Delivery</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Status</th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Order
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Customer
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Date
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Items
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Total
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  TxID
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Delivery
+                </th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -125,7 +158,9 @@ const AdminOrders = () => {
                     <td className="p-4 text-primary font-bold">${order.total.toFixed(2)}</td>
                     <td className="p-4 font-mono text-xs">{order.transaction_id || "—"}</td>
                     <td className="p-4 text-xs">
-                      <span className={`capitalize ${order.delivery_method === "safeboda" ? "text-green-400 font-semibold" : ""}`}>
+                      <span
+                        className={`capitalize ${order.delivery_method === "safeboda" ? "text-green-400 font-semibold" : ""}`}
+                      >
                         {order.delivery_method === "safeboda" ? "SafeBoda 🏍️" : order.delivery_method}
                       </span>
                     </td>
