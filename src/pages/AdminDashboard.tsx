@@ -90,16 +90,17 @@ const AdminDashboard = () => {
     if (order?.customer_email) {
       try {
         await supabase.functions.invoke("send-order-email", {
-          body: {
+          body: JSON.stringify({
+            // ✅ Fixed: was plain object, now properly stringified
             email: order.customer_email,
             name: order.customer_name || "Customer",
             orderId: orderId.slice(0, 8),
             status: newStatus,
             total: order.total,
-          },
+          }),
         });
-      } catch {
-        // Email sending is best-effort
+      } catch (err) {
+        console.error("Failed to send email:", err);
       }
     }
 
