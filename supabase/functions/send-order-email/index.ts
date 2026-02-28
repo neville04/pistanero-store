@@ -12,7 +12,7 @@ const statusMessages: Record<string, { subject: string; message: string }> = {
     message: "We have received your order and are verifying your payment. We'll update you once confirmed.",
   },
   processing: {
-    subject: "Payment Verified - Order Processing",
+    subject: "Payment Verified -  Order Processing",
     message:
       "Your payment has been verified! Your order is now being processed and will be ready for pickup/delivery soon.",
   },
