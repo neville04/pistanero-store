@@ -157,7 +157,7 @@ const AdminOrders = () => {
                     </td>
                     <td className="p-4 text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</td>
                     <td className="p-4">{order.items.length} items</td>
-                    <td className="p-4 text-primary font-bold">${order.total.toFixed(2)}</td>
+                    <td className="p-4 text-primary font-bold">{order.total.toLocaleString()} UGX</td>
                     <td className="p-4 font-mono text-xs">{order.transaction_id || "—"}</td>
                     <td className="p-4 text-xs">
                       <span

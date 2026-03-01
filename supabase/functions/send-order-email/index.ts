@@ -59,7 +59,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Pistanero <orders@pistanero.store>",
+        from: "Pistanero <onboarding@resend.dev>",
         to: [email],
         subject: `Pistanero - ${config.subject}`,
         html: `
