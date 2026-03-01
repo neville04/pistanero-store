@@ -157,13 +157,13 @@ const Orders = () => {
                           <span>
                             {item.name} <span className="text-muted-foreground">×{item.quantity}</span>
                           </span>
-                          <span className="text-muted-foreground">${(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="text-muted-foreground">{(item.price * item.quantity).toLocaleString()} UGX</span>
                         </div>
                       ))}
                     </div>
                     <div className="border-t border-border pt-3 flex justify-between">
                       <span className="font-display text-sm font-semibold">Total</span>
-                      <span className="font-bold text-primary">${order.total.toFixed(2)}</span>
+                      <span className="font-bold text-primary">{order.total.toLocaleString()} UGX</span>
                     </div>
                   </motion.div>
                 );

@@ -18,6 +18,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<"cart" | "checkout">("cart");
   const [transactionId, setTransactionId] = useState("");
+  const [phone, setPhone] = useState(user?.user_metadata?.phone || "");
   const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">("pickup");
   const [useSafeboda, setUseSafeboda] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -49,7 +50,7 @@ const Cart = () => {
         delivery_method: deliveryMethod === "delivery" && useSafeboda ? "safeboda" : deliveryMethod,
         customer_name: user.user_metadata?.full_name || "",
         customer_email: user.email || "",
-        phone: user.user_metadata?.phone || "",
+        phone: phone.trim(),
       });
 
       if (error) throw error;
@@ -117,7 +118,7 @@ const Cart = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-display text-sm font-semibold truncate">{item.name}</h3>
-                        <p className="text-primary font-bold">${item.price}</p>
+                        <p className="text-primary font-bold">{item.price.toLocaleString()} UGX</p>
                       </div>
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-3">
@@ -150,8 +151,8 @@ const Cart = () => {
               <div className="glass-card p-6">
                 <div className="flex justify-between mb-4">
                   <span className="text-muted-foreground">Total</span>
-                  <span className="font-display text-2xl font-bold text-primary">
-                    ${totalPrice.toFixed(2)}
+                    <span className="font-display text-2xl font-bold text-primary">
+                    {totalPrice.toLocaleString()} UGX
                   </span>
                 </div>
                 <button
@@ -175,13 +176,31 @@ const Cart = () => {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} <span className="text-muted-foreground">×{item.quantity}</span></span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      <span>{(item.price * item.quantity).toLocaleString()} UGX</span>
                     </div>
                   ))}
                 </div>
                 <div className="border-t border-border pt-3 flex justify-between">
                   <span className="font-display font-semibold">Total</span>
-                  <span className="font-bold text-primary text-xl">${totalPrice.toFixed(2)}</span>
+                  <span className="font-bold text-primary text-xl">{totalPrice.toLocaleString()} UGX</span>
+                </div>
+              </div>
+
+              {/* Contact Details */}
+              <div className="glass-card p-6">
+                <h3 className="font-display text-lg font-semibold mb-3">Contact Details</h3>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. 0771234567"
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    We'll use this to contact you about your order.
+                  </p>
                 </div>
               </div>
 
@@ -242,9 +261,8 @@ const Cart = () => {
                   Payment via Mobile Money
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Send <span className="text-primary font-bold">${totalPrice.toFixed(2)}</span> to one of the numbers below, then enter your transaction ID.
+                  Send <span className="text-primary font-bold">{totalPrice.toLocaleString()} UGX</span> to the number below, then enter your transaction ID.
                 </p>
-
                 <div className="mb-6">
                   <div className="p-4 rounded-lg border border-border bg-secondary/30 max-w-sm">
                     <div className="flex items-center gap-2 mb-2">
@@ -255,7 +273,6 @@ const Cart = () => {
                     <p className="text-xs text-muted-foreground mt-1">Business Name: Pistanero</p>
                   </div>
                 </div>
-
                 <div>
                   <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-2">
                     <CreditCard className="w-4 h-4" />
