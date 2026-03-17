@@ -43,6 +43,7 @@ const navLinks = [
     children: [
       { to: "/skills/coaches", label: "Coaches" },
       { to: "/skills/youth-tennis", label: "Tennis Youth Development" },
+      { to: "/skills/players", label: "Players" },
     ],
   },
   {
@@ -51,9 +52,9 @@ const navLinks = [
     children: [
       { to: "/apparel", label: "Apparel" },
       { to: "/membership", label: "Membership" },
-      { to: "/contact", label: "Contact" },
     ],
   },
+  { to: "/contact", label: "Contact" },
 ];
 
 const Navbar = () => {
