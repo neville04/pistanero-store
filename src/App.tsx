@@ -14,6 +14,7 @@ import Courts from "./pages/Courts";
 import Membership from "./pages/Membership";
 import Wellness from "./pages/Wellness";
 import Skills from "./pages/Skills";
+import Players from "./pages/Players";
 import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
