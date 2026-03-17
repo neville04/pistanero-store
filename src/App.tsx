@@ -14,6 +14,7 @@ import Courts from "./pages/Courts";
 import Membership from "./pages/Membership";
 import Wellness from "./pages/Wellness";
 import Skills from "./pages/Skills";
+import Players from "./pages/Players";
 import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -57,6 +58,7 @@ const AppRoutes = () => {
         <Route path="/wellness/:type" element={<Wellness />} />
         {/* Skills */}
         <Route path="/skills" element={<Skills />} />
+        <Route path="/skills/players" element={<Players />} />
         <Route path="/skills/:type" element={<Skills />} />
         {/* Other */}
         <Route path="/cart" element={<Cart />} />
