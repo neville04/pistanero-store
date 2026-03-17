@@ -58,6 +58,7 @@ const AppRoutes = () => {
         <Route path="/wellness/:type" element={<Wellness />} />
         {/* Skills */}
         <Route path="/skills" element={<Skills />} />
+        <Route path="/skills/players" element={<Players />} />
         <Route path="/skills/:type" element={<Skills />} />
         {/* Other */}
         <Route path="/cart" element={<Cart />} />
