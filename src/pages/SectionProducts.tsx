@@ -12,15 +12,35 @@ interface SectionProductsProps {
   section: string;
   title: string;
   subtitle: string;
+  showGenderFilter?: boolean;
 }
 
-const SectionProducts = ({ section, title, subtitle }: SectionProductsProps) => {
+const GENDER_FILTERS = ["All", "Men", "Women", "Kids"];
+
+const SectionProducts = ({ section, title, subtitle, showGenderFilter = false }: SectionProductsProps) => {
   const { addItem } = useCart();
   const { user } = useAuth();
   const { products, loading } = useProducts();
   const [signInOpen, setSignInOpen] = useState(false);
+  const [genderFilter, setGenderFilter] = useState("All");
 
-  const filtered = products.filter((p) => p.section === section);
+  // Filter by section, then optionally by gender sub-section
+  const sectionFiltered = products.filter((p) => p.section === section);
+  const filtered = showGenderFilter && genderFilter !== "All"
+    ? sectionFiltered.filter((p) => p.category.toLowerCase() === genderFilter.toLowerCase() || p.color?.toLowerCase().includes(genderFilter.toLowerCase()) || p.section === genderFilter.toLowerCase())
+    : sectionFiltered;
+
+  // For apparel we filter by the gender stored in section field (men/women/kids)
+  const apparelFiltered = showGenderFilter && genderFilter !== "All"
+    ? products.filter((p) =>
+        ["men", "women", "kids"].includes(p.section) &&
+        (genderFilter === "Men" ? p.section === "men" :
+         genderFilter === "Women" ? p.section === "women" :
+         p.section === "kids")
+      )
+    : products.filter((p) => ["men", "women", "kids"].includes(p.section));
+
+  const displayProducts = showGenderFilter ? apparelFiltered : filtered;
 
   const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
     if (!user) { setSignInOpen(true); return; }
@@ -39,15 +59,34 @@ const SectionProducts = ({ section, title, subtitle }: SectionProductsProps) => 
           >
             {title}
           </motion.h1>
-          <p className="text-muted-foreground mb-10">{subtitle}</p>
+          <p className="text-muted-foreground mb-8">{subtitle}</p>
+
+          {/* Gender Filter — apparel only */}
+          {showGenderFilter && (
+            <div className="flex gap-2 mb-8 flex-wrap">
+              {GENDER_FILTERS.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setGenderFilter(f)}
+                  className={`px-5 py-2 rounded-full text-sm font-display font-semibold uppercase tracking-widest transition-all ${
+                    genderFilter === f
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
 
           {loading ? (
             <p className="text-center text-muted-foreground py-12">Loading products...</p>
-          ) : filtered.length === 0 ? (
+          ) : displayProducts.length === 0 ? (
             <p className="text-center text-muted-foreground py-12">No products available yet.</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((product, i) => (
+              {displayProducts.map((product, i) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}

@@ -2,21 +2,32 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Player {
   id: string;
   name: string;
   sport: string;
   level: string;
-  image_url?: string | null;
+  experience_years: number;
+  image_urls: string[];
   bio?: string | null;
 }
 
-// Placeholder data — swap with a real DB table when ready
-const placeholderPlayers: Player[] = [];
-
 const Players = () => {
-  const [players] = useState<Player[]>(placeholderPlayers);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from("players")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setPlayers(data as unknown as Player[]);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,8 +52,9 @@ const Players = () => {
             </p>
           </motion.div>
 
-          {/* Grid */}
-          {players.length === 0 ? (
+          {loading ? (
+            <p className="text-center text-muted-foreground py-24">Loading players...</p>
+          ) : players.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -66,29 +78,52 @@ const Players = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="glass-card p-5 flex flex-col items-center text-center group hover:border-primary/40 transition-colors"
+                  className="glass-card overflow-hidden flex flex-col group hover:border-primary/40 transition-colors"
                 >
-                  <div className="w-20 h-20 rounded-full overflow-hidden mb-4 bg-secondary/40 flex items-center justify-center border border-border/40">
-                    {player.image_url ? (
+                  {/* Photo area */}
+                  <div className="w-full aspect-square overflow-hidden bg-secondary/40 flex items-center justify-center">
+                    {player.image_urls.length > 0 ? (
                       <img
-                        src={player.image_url}
+                        src={player.image_urls[0]}
                         alt={player.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <User className="w-8 h-8 text-muted-foreground" />
+                      <User className="w-12 h-12 text-muted-foreground" />
                     )}
                   </div>
-                  <h3 className="font-display text-sm font-bold group-hover:text-primary transition-colors mb-1">
-                    {player.name}
-                  </h3>
-                  <span className="text-xs bg-primary/15 text-primary px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wide mb-2">
-                    {player.sport}
-                  </span>
-                  <p className="text-xs text-muted-foreground">{player.level}</p>
-                  {player.bio && (
-                    <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{player.bio}</p>
-                  )}
+
+                  {/* Info area */}
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="font-display text-sm font-bold group-hover:text-primary transition-colors mb-1">
+                      {player.name}
+                    </h3>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs bg-primary/15 text-primary px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wide">
+                        {player.sport}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{player.level}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {player.experience_years} yr{player.experience_years !== 1 ? "s" : ""} experience
+                    </p>
+                    {player.bio && (
+                      <p className="text-xs text-muted-foreground line-clamp-3 flex-1">{player.bio}</p>
+                    )}
+                    {/* Extra photos */}
+                    {player.image_urls.length > 1 && (
+                      <div className="flex gap-1.5 mt-3">
+                        {player.image_urls.slice(1).map((url, j) => (
+                          <img
+                            key={j}
+                            src={url}
+                            alt=""
+                            className="w-9 h-9 rounded-md object-cover border border-border/40"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               ))}
             </div>
