@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, TrendingUp, Package, LogOut, Menu, X, Users, ShoppingBag, CalendarDays } from "lucide-react";
+import { Home, TrendingUp, Package, LogOut, Menu, X, Users, ShoppingBag, CalendarDays, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
@@ -7,6 +7,7 @@ import logo from "@/assets/logo.png";
 const adminLinks = [
   { to: "/admin", label: "Home", icon: Home },
   { to: "/admin/products", label: "Products", icon: ShoppingBag },
+  { to: "/admin/players", label: "Players", icon: UserCheck },
   { to: "/admin/events", label: "Events", icon: CalendarDays },
   { to: "/admin/sales", label: "Sales", icon: TrendingUp },
   { to: "/admin/orders", label: "Orders", icon: Package },
@@ -39,7 +40,7 @@ const AdminNavbar = () => {
               to={link.to}
               end={link.to === "/admin"}
               className={({ isActive }) =>
-                `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
