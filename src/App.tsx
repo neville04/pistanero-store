@@ -47,7 +47,7 @@ const AppRoutes = () => {
         <Route path="/men" element={<SectionProducts section="men" title="Men's Collection" subtitle="Performance gear built for the modern athlete." />} />
         <Route path="/women" element={<SectionProducts section="women" title="Women's Collection" subtitle="Stylish and functional sportswear for every game." />} />
         <Route path="/bags" element={<SectionProducts section="bags" title="Bags & Carriers" subtitle="Carry your gear in style – from court to street." />} />
-        <Route path="/apparel" element={<Products />} />
+        <Route path="/apparel" element={<SectionProducts section="apparel" title="Apparel" subtitle="Sport-ready clothing for men, women, and kids." showGenderFilter={true} />} />
         {/* Courts */}
         <Route path="/courts" element={<Courts />} />
         <Route path="/courts/:sport" element={<Courts />} />
