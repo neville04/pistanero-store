@@ -22,6 +22,7 @@ import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminPlayers from "./pages/admin/AdminPlayers";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminSales from "./pages/admin/AdminSales";
 import AdminOrders from "./pages/admin/AdminOrders";
