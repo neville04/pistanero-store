@@ -61,7 +61,7 @@ const AdminSales = () => {
 
       <div className="glass-card p-6 mb-8 inline-block">
         <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Revenue</p>
-        <p className="text-3xl font-bold text-primary">${totalRevenue.toFixed(2)}</p>
+        <p className="text-3xl font-bold text-primary">{totalRevenue.toLocaleString()} UGX</p>
         <p className="text-xs text-muted-foreground">{orders.length} completed orders</p>
       </div>
 
@@ -74,7 +74,7 @@ const AdminSales = () => {
                 <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Customer</th>
                 <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Date</th>
                 <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Items</th>
-                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Total</th>
+                <th className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground">Total (UGX)</th>
               </tr>
             </thead>
             <tbody>
@@ -84,7 +84,7 @@ const AdminSales = () => {
                   <td className="p-4">{order.customer_name || "—"}</td>
                   <td className="p-4 text-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</td>
                   <td className="p-4">{order.items.length} items</td>
-                  <td className="p-4 text-primary font-bold">${order.total.toFixed(2)}</td>
+                  <td className="p-4 text-primary font-bold">{order.total.toLocaleString()} UGX</td>
                 </tr>
               ))}
             </tbody>

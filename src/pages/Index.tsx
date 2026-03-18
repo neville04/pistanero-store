@@ -84,6 +84,7 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
 
   const ev = visible[idx];
 
+  // Card is tall: image top half + text bottom half, reaching ~up to "Own" level
   return (
     <div
       className="absolute z-20"
@@ -107,8 +108,8 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
         </button>
       </div>
 
-      {/* Card stack — all at same position, only one visible */}
-      <div className="relative w-[280px]" style={{ height: 140 }}>
+      {/* Card stack — taller card with image top half, text bottom half */}
+      <div className="relative w-[260px]" style={{ height: 320 }}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={ev.id}
@@ -126,7 +127,23 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            <div className="p-4 flex flex-col h-full">
+            {/* Top half — image */}
+            <div className="h-[160px] w-full overflow-hidden flex-shrink-0 bg-black/30">
+              {ev.image_url ? (
+                <img
+                  src={ev.image_url}
+                  alt={ev.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom half — text */}
+            <div className="flex-1 p-4 flex flex-col">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide">
                   {ev.tag}
@@ -136,11 +153,11 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
                   <span className="ml-auto text-[10px] text-white/40">{idx + 1}/{total}</span>
                 )}
               </div>
-              <h3 className="text-white text-sm font-bold leading-snug line-clamp-2 mb-1.5" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.03em" }}>
+              <h3 className="text-white font-bold leading-snug line-clamp-2 mb-1.5" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.03em" }}>
                 {ev.title}
               </h3>
               {ev.excerpt && (
-                <p className="text-white/60 text-xs line-clamp-2 flex-1">{ev.excerpt}</p>
+                <p className="text-white/60 text-xs line-clamp-3 flex-1">{ev.excerpt}</p>
               )}
             </div>
           </motion.div>

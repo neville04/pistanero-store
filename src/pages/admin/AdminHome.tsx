@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Package, DollarSign, Clock, Truck, CheckCircle2 } from "lucide-react";
+import { Loader2, Package, Banknote, Clock, Truck, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +49,7 @@ const AdminHome = () => {
 
   const cards = [
     { icon: Package, label: "Total Orders", value: stats.total, color: "text-primary" },
-    { icon: DollarSign, label: "Total Sales", value: `$${stats.sales.toFixed(2)}`, color: "text-green-400" },
+    { icon: Banknote, label: "Total Sales", value: `${stats.sales.toLocaleString()} UGX`, color: "text-green-400" },
     { icon: Clock, label: "Pending", value: stats.pending, color: "text-yellow-400" },
     { icon: Truck, label: "Processing", value: stats.processing, color: "text-blue-400" },
     { icon: CheckCircle2, label: "Delivered", value: stats.delivered, color: "text-green-400" },
@@ -64,8 +64,8 @@ const AdminHome = () => {
         {cards.map((c) => (
           <div key={c.label} className="glass-card p-5 text-center">
             <c.icon className={`w-6 h-6 mx-auto mb-2 ${c.color}`} />
-            <p className="text-2xl font-bold">{c.value}</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">{c.label}</p>
+            <p className="text-xl font-bold leading-tight">{c.value}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">{c.label}</p>
           </div>
         ))}
       </div>

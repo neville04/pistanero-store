@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import Footer from "@/components/Footer";
 
 const PAYMENT_INFO = {
-  mtn: { name: "MTN MOMO", code: "0771699039", color: "#FFCC00" },
+  mtn: { name: "MTN MOMO", code: "0786443440", color: "#FFCC00" },
 };
 
 const Cart = () => {

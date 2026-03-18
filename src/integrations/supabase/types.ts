@@ -92,6 +92,42 @@ export type Database = {
         }
         Relationships: []
       }
+      players: {
+        Row: {
+          bio: string | null
+          created_at: string
+          experience_years: number
+          id: string
+          image_urls: string[]
+          level: string
+          name: string
+          sport: string
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          experience_years?: number
+          id?: string
+          image_urls?: string[]
+          level?: string
+          name: string
+          sport?: string
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          experience_years?: number
+          id?: string
+          image_urls?: string[]
+          level?: string
+          name?: string
+          sport?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string
