@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      court_bookings: {
+        Row: {
+          court_type: string
+          created_at: string
+          customer_name: string
+          dates: string
+          id: string
+          number_of_teams: number
+          status: string
+          team_size: number
+          updated_at: string
+        }
+        Insert: {
+          court_type: string
+          created_at?: string
+          customer_name: string
+          dates: string
+          id?: string
+          number_of_teams?: number
+          status?: string
+          team_size?: number
+          updated_at?: string
+        }
+        Update: {
+          court_type?: string
+          created_at?: string
+          customer_name?: string
+          dates?: string
+          id?: string
+          number_of_teams?: number
+          status?: string
+          team_size?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string

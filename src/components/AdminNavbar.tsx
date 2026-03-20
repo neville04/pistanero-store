@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Home, TrendingUp, Package, LogOut, Menu, X, Users, ShoppingBag, CalendarDays, UserCheck } from "lucide-react";
+import { Home, TrendingUp, Package, LogOut, Menu, X, Users, ShoppingBag, CalendarDays, UserCheck, CalendarCheck } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
@@ -9,6 +9,7 @@ const adminLinks = [
   { to: "/admin/products", label: "Products", icon: ShoppingBag },
   { to: "/admin/players", label: "Players", icon: UserCheck },
   { to: "/admin/events", label: "Events", icon: CalendarDays },
+  { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
   { to: "/admin/sales", label: "Sales", icon: TrendingUp },
   { to: "/admin/orders", label: "Orders", icon: Package },
   { to: "/admin/users", label: "Users", icon: Users },
