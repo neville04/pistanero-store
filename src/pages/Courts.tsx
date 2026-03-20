@@ -177,24 +177,32 @@ const Courts = () => {
                   )}
                 </div>
 
-                <div className="glass-card p-6 space-y-3">
+                <div className="glass-card p-6 space-y-4">
                   <h2 className="font-display text-xl font-bold">Book This Court</h2>
                   <p className="text-sm text-muted-foreground">
-                    Call or WhatsApp us to reserve your slot. Walk-ins welcome, subject to availability.
+                    Call us directly or submit a booking request online.
                   </p>
-                  <a
-                    href="tel:0771699039"
-                    className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium text-sm hover:bg-primary/80 transition-colors w-fit"
-                  >
-                    <Phone className="w-4 h-4" /> Call 0771699039
-                  </a>
-                  <Link
-                    to="/contact"
-                    className="flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-full font-medium text-sm hover:bg-primary/10 transition-colors w-fit"
-                  >
-                    Send a Message
-                  </Link>
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href="tel:0771699039"
+                      className="flex items-center gap-2 px-6 py-3 bg-secondary border border-border text-foreground rounded-full font-medium text-sm hover:bg-secondary/80 transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-primary" /> Call 0771699039
+                    </a>
+                    <button
+                      onClick={() => setBookingOpen(true)}
+                      className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium text-sm hover:bg-primary/80 transition-colors hover-glow"
+                    >
+                      <CalendarCheck className="w-4 h-4" /> Book Now
+                    </button>
+                  </div>
                 </div>
+
+                <BookingFormDialog
+                  open={bookingOpen}
+                  onOpenChange={setBookingOpen}
+                  courtType={sport || "court"}
+                />
               </motion.div>
             </div>
           )}
