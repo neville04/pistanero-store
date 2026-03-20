@@ -72,6 +72,7 @@ const allCourts = [
 const Courts = () => {
   const { sport } = useParams<{ sport?: string }>();
   const section = sport && courtSections[sport as keyof typeof courtSections];
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col">
