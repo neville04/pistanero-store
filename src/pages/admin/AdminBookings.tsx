@@ -9,6 +9,7 @@ import { toast } from "sonner";
 interface Booking {
   id: string;
   customer_name: string;
+  customer_email: string | null;
   team_size: number;
   number_of_teams: number;
   dates: string;
@@ -49,12 +50,40 @@ const AdminBookings = () => {
     load();
   }, [user, navigate]);
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (booking: Booking, newStatus: string) => {
     const { error } = await supabase
-      .from("court_bookings").update({ status }).eq("id", id);
+      .from("court_bookings").update({ status: newStatus }).eq("id", booking.id);
     if (error) { toast.error(error.message); return; }
-    setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status } : b));
+
+    setBookings((prev) => prev.map((b) => b.id === booking.id ? { ...b, status: newStatus } : b));
     toast.success("Booking status updated");
+
+    // Send email notification if customer has an email
+    if (booking.customer_email) {
+      try {
+        const { error: emailError } = await supabase.functions.invoke("send-booking-email", {
+          body: {
+            email: booking.customer_email,
+            name: booking.customer_name,
+            bookingId: booking.id,
+            courtType: booking.court_type,
+            dates: booking.dates,
+            teamSize: booking.team_size,
+            numberOfTeams: booking.number_of_teams,
+            status: newStatus,
+          },
+        });
+        if (emailError) {
+          console.error("Email send error:", emailError);
+          toast.warning("Status updated, but email notification failed.");
+        } else {
+          toast.success(`Email notification sent to ${booking.customer_email}`);
+        }
+      } catch (err) {
+        console.error("Failed to send booking email:", err);
+        toast.warning("Status updated, but email notification failed.");
+      }
+    }
   };
 
   const deleteBooking = async (id: string) => {
@@ -82,7 +111,7 @@ const AdminBookings = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                {["Customer", "Court", "Team Size", "Teams", "Date(s)", "Submitted", "Status", ""].map((h) => (
+                {["Customer", "Email", "Court", "Team Size", "Teams", "Date(s)", "Submitted", "Status", ""].map((h) => (
                   <th key={h} className="text-left p-4 font-display text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -90,7 +119,8 @@ const AdminBookings = () => {
             <tbody>
               {bookings.map((b) => (
                 <tr key={b.id} className="border-b border-border/50 hover:bg-secondary/30">
-                  <td className="p-4 font-medium">{b.customer_name}</td>
+                  <td className="p-4 font-medium whitespace-nowrap">{b.customer_name}</td>
+                  <td className="p-4 text-muted-foreground text-xs">{b.customer_email || <span className="italic opacity-50">—</span>}</td>
                   <td className="p-4 capitalize">{b.court_type}</td>
                   <td className="p-4 text-center">{b.team_size}</td>
                   <td className="p-4 text-center">{b.number_of_teams}</td>
@@ -101,7 +131,7 @@ const AdminBookings = () => {
                   <td className="p-4">
                     <select
                       value={b.status}
-                      onChange={(e) => updateStatus(b.id, e.target.value)}
+                      onChange={(e) => updateStatus(b, e.target.value)}
                       className={`text-xs px-2 py-1 rounded-full border bg-transparent font-medium cursor-pointer ${statusColors[b.status] || statusColors.pending}`}
                     >
                       <option value="pending">Pending</option>

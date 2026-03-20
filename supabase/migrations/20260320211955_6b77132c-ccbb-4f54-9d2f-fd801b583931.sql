@@ -1,0 +1,1 @@
+ALTER TABLE public.court_bookings ADD COLUMN IF NOT EXISTS customer_email TEXT;

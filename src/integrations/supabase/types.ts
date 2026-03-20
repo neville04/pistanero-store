@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           court_type: string
           created_at: string
+          customer_email: string | null
           customer_name: string
           dates: string
           id: string
@@ -29,6 +30,7 @@ export type Database = {
         Insert: {
           court_type: string
           created_at?: string
+          customer_email?: string | null
           customer_name: string
           dates: string
           id?: string
@@ -40,6 +42,7 @@ export type Database = {
         Update: {
           court_type?: string
           created_at?: string
+          customer_email?: string | null
           customer_name?: string
           dates?: string
           id?: string

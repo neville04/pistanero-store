@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CalendarDays, Users, Loader2, CheckCircle } from "lucide-react";
+import { X, CalendarDays, Users, Loader2, CheckCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ interface BookingFormDialogProps {
 
 const BookingFormDialog = ({ open, onOpenChange, courtType }: BookingFormDialogProps) => {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [teamSize, setTeamSize] = useState(1);
   const [numberOfTeams, setNumberOfTeams] = useState(1);
   const [dates, setDates] = useState("");
@@ -20,6 +21,7 @@ const BookingFormDialog = ({ open, onOpenChange, courtType }: BookingFormDialogP
 
   const reset = () => {
     setName("");
+    setEmail("");
     setTeamSize(1);
     setNumberOfTeams(1);
     setDates("");
@@ -35,15 +37,31 @@ const BookingFormDialog = ({ open, onOpenChange, courtType }: BookingFormDialogP
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.from("court_bookings").insert({
+      const { data, error } = await supabase.from("court_bookings").insert({
         customer_name: name,
+        customer_email: email,
         team_size: teamSize,
         number_of_teams: numberOfTeams,
         dates,
         court_type: courtType,
         status: "pending",
-      });
+      }).select().single();
       if (error) throw error;
+
+      // Send confirmation email to client
+      await supabase.functions.invoke("send-booking-email", {
+        body: {
+          email,
+          name,
+          bookingId: data.id,
+          courtType,
+          dates,
+          teamSize,
+          numberOfTeams,
+          status: "pending",
+        },
+      });
+
       setSubmitted(true);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit booking");
@@ -86,8 +104,11 @@ const BookingFormDialog = ({ open, onOpenChange, courtType }: BookingFormDialogP
               <div className="text-center py-6">
                 <CheckCircle className="w-14 h-14 text-primary mx-auto mb-4" />
                 <h2 className="font-display text-2xl font-bold mb-2">Booking Received!</h2>
+                <p className="text-muted-foreground text-sm mb-2">
+                  We'll confirm your <span className="text-primary font-medium capitalize">{courtType}</span> court booking shortly.
+                </p>
                 <p className="text-muted-foreground text-sm mb-6">
-                  We'll confirm your <span className="text-primary font-medium capitalize">{courtType}</span> court booking shortly. Check back or call us for confirmation.
+                  A confirmation email has been sent to <span className="text-foreground">{email}</span>.
                 </p>
                 <button
                   onClick={handleClose}
@@ -112,6 +133,20 @@ const BookingFormDialog = ({ open, onOpenChange, courtType }: BookingFormDialogP
                       onChange={(e) => setName(e.target.value)}
                       required
                       placeholder="John Doe"
+                      className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 flex items-center gap-1.5">
+                      <Mail className="w-3.5 h-3.5" /> Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      placeholder="you@example.com"
                       className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
                     />
                   </div>
