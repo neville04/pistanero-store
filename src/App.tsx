@@ -27,6 +27,7 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import AdminSales from "./pages/admin/AdminSales";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminBookings from "./pages/admin/AdminBookings";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 import WelcomeDialog from "./components/WelcomeDialog";

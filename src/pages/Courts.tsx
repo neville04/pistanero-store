@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, MapPin, Phone, ChevronRight } from "lucide-react";
+import { Clock, MapPin, Phone, ChevronRight, CalendarCheck } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import Footer from "@/components/Footer";
+import BookingFormDialog from "@/components/BookingFormDialog";
 import tennisCourt1 from "@/assets/court-tennis-1.jpg";
 import tennisCourt2 from "@/assets/court-tennis-2.jpg";
 import tennisCourt3 from "@/assets/court-tennis-3.jpg";
