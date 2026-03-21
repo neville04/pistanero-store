@@ -20,7 +20,8 @@ const Contact = () => {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.from("contact_submissions").insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any).from("contact_submissions").insert({
         name: name.trim(),
         email: email.trim(),
         message: message.trim(),
