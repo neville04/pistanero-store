@@ -41,9 +41,10 @@ const Cart = () => {
 
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("orders").insert({
+      const orderItems = items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity }));
+      const { data: orderData, error } = await supabase.from("orders").insert({
         user_id: user.id,
-        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+        items: orderItems,
         total: totalPrice,
         status: "pending",
         transaction_id: transactionId.trim(),
@@ -51,9 +52,23 @@ const Cart = () => {
         customer_name: user.user_metadata?.full_name || "",
         customer_email: user.email || "",
         phone: phone.trim(),
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Notify admin of new order
+      supabase.functions.invoke("notify-admin-order", {
+        body: {
+          orderId: orderData?.id,
+          customerName: user.user_metadata?.full_name || "Customer",
+          customerEmail: user.email || "",
+          phone: phone.trim(),
+          total: totalPrice,
+          items: orderItems,
+          deliveryMethod: deliveryMethod === "delivery" && useSafeboda ? "safeboda" : deliveryMethod,
+          transactionId: transactionId.trim(),
+        },
+      }).catch((err) => console.error("Failed to send order notification:", err));
 
       clearCart();
       setStep("cart");
