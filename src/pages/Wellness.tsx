@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import Footer from "@/components/Footer";
+import BookingFormDialog from "@/components/BookingFormDialog";
 
 const sections = {
   "running-club": {
@@ -31,6 +33,7 @@ const sections = {
 const Wellness = () => {
   const { type } = useParams<{ type?: string }>();
   const section = type && sections[type as keyof typeof sections];
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -83,19 +86,29 @@ const Wellness = () => {
               </motion.div>
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="glass-card p-8 space-y-4">
                 <h2 className="font-display text-xl font-bold">Book a Session</h2>
-                <p className="text-sm text-muted-foreground">Get in touch to reserve your spot or find out the next session schedule.</p>
+                <p className="text-sm text-muted-foreground">Reserve your spot or find out the next session schedule.</p>
                 <a href="tel:0771699039" className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium text-sm hover:bg-primary/80 transition-colors w-fit">
                   <Phone className="w-4 h-4" /> Call 0771699039
                 </a>
-                <Link to="/contact" className="flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-full font-medium text-sm hover:bg-primary/10 transition-colors w-fit">
-                  Send a Message
-                </Link>
+                <button
+                  onClick={() => setBookingOpen(true)}
+                  className="flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-full font-medium text-sm hover:bg-primary/10 transition-colors w-fit"
+                >
+                  Book Now
+                </button>
               </motion.div>
             </div>
           )}
         </div>
       </div>
       <Footer />
+      {type && (
+        <BookingFormDialog
+          open={bookingOpen}
+          onOpenChange={setBookingOpen}
+          courtType={type === "fitness-classes" ? "fitness class" : "running club"}
+        />
+      )}
     </div>
   );
 };

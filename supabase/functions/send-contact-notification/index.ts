@@ -1,0 +1,94 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { name, email, message } = await req.json();
+
+    if (!name || !email || !message) {
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    if (!RESEND_API_KEY) {
+      console.log("RESEND_API_KEY not set — skipping email.");
+      return new Response(JSON.stringify({ success: true, skipped: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "Pistanero <orders@pistanero.store>",
+        to: ["pistanero@outlook.com"],
+        subject: `New Contact Message from ${name}`,
+        html: `
+          <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #141820; border-radius: 12px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #141820, #1a1f2e); padding: 32px 24px; text-align: center; border-bottom: 2px solid #f97316;">
+              <img src="https://knulhygeseazoappsedy.supabase.co/storage/v1/object/public/email-assets/logo.png" alt="Pistanero" style="height: 48px;" />
+            </div>
+            <div style="padding: 32px 24px;">
+              <p style="color: #f97316; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 8px;">New Contact Message</p>
+              <h2 style="color: #f0f0f0; font-size: 20px; margin: 0 0 24px;">You have a new message from the website</h2>
+
+              <div style="background: #1c2130; padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0; width: 80px;">From</td>
+                    <td style="color: #f0f0f0; font-size: 14px; padding: 6px 0;">${name}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0;">Email</td>
+                    <td style="padding: 6px 0;"><a href="mailto:${email}" style="color: #f97316; font-size: 14px; text-decoration: none;">${email}</a></td>
+                  </tr>
+                </table>
+              </div>
+
+              <div style="background: #1c2130; padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px;">
+                <p style="color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 12px;">Message</p>
+                <p style="color: #e0e0e0; font-size: 14px; line-height: 1.7; margin: 0; white-space: pre-wrap;">${message}</p>
+              </div>
+
+              <p style="color: #666; font-size: 13px;">
+                Reply directly to <a href="mailto:${email}" style="color: #f97316; text-decoration: none;">${email}</a> to respond.
+              </p>
+            </div>
+            <div style="background: #0f1218; padding: 20px 24px; text-align: center;">
+              <p style="color: #555; font-size: 11px; margin: 0; letter-spacing: 0.5px;">Pistanero — The Home of Sports</p>
+            </div>
+          </div>
+        `,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Contact notification sent:", { from: email, resendResponse: data });
+
+    return new Response(JSON.stringify({ success: true, data }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error sending contact notification:", error);
+    return new Response(JSON.stringify({ error: "Failed to send notification" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
