@@ -7,10 +7,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 import SignInPromptDialog from "@/components/SignInPromptDialog";
+import ProductImageDialog from "@/components/ProductImageDialog";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [signInOpen, setSignInOpen] = useState(false);
+  const [imageViewer, setImageViewer] = useState<{ open: boolean; images: string[]; name: string }>({
+    open: false,
+    images: [],
+    name: "",
+  });
   const { addItem } = useCart();
   const { user } = useAuth();
   const { products, loading } = useProducts();
@@ -71,7 +77,13 @@ const Products = () => {
                   transition={{ delay: i * 0.05 }}
                   className="glass-card p-6 flex flex-col hover-glow group"
                 >
-                  <div className="w-full h-44 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30">
+                  <button
+                    type="button"
+                    onClick={() => product.image_urls.length > 0 && setImageViewer({ open: true, images: product.image_urls, name: product.name })}
+                    className="w-full h-44 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30 disabled:cursor-default"
+                    disabled={product.image_urls.length === 0}
+                    aria-label={`Open ${product.name} image gallery`}
+                  >
                     {product.image_urls.length > 0 ? (
                       <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-contain" />
                     ) : (
@@ -79,7 +91,7 @@ const Products = () => {
                         {product.category}
                       </span>
                     )}
-                  </div>
+                  </button>
                   <h3 className="font-display text-sm font-semibold mb-1 group-hover:text-primary transition-colors">
                     {product.name}
                   </h3>
@@ -103,6 +115,12 @@ const Products = () => {
         </div>
       </div>
       <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
+      <ProductImageDialog
+        open={imageViewer.open}
+        onOpenChange={(open) => setImageViewer((viewer) => ({ ...viewer, open }))}
+        images={imageViewer.images}
+        productName={imageViewer.name}
+      />
       <Footer />
     </div>
   );
