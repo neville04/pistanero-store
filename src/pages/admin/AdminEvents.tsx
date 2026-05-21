@@ -165,9 +165,10 @@ const AdminEvents = () => {
             {/* Image */}
             <div className="space-y-2">
               <Label>Event Image</Label>
-              <p className="text-xs text-muted-foreground">
-                Recommended size: <span className="text-foreground font-medium">1200 × 800 px</span> (3:2 landscape, under 2 MB).
-                The first image is shown on the card; add more for an optional scrollable gallery.
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <span className="text-foreground font-medium">Recommended:</span> 1300 × 800 px landscape (≈ 13:8 ratio) for the best fit on the landing-page card.
+                Keep important content centered, file under 2 MB, JPG or PNG.
+                The first image is shown on the card — add more for an optional scrollable gallery in fullscreen view.
               </p>
               {form.image_urls.length > 0 && (
                 <div className="flex flex-wrap gap-3 mb-2">
