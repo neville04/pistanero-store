@@ -52,6 +52,7 @@ const navLinks = [
     children: [
       { to: "/apparel", label: "Apparel" },
       { to: "/membership", label: "Membership" },
+      { to: "/about", label: "About Us" },
     ],
   },
   { to: "/contact", label: "Contact" },
