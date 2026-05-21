@@ -141,16 +141,16 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            {/* Top half — image */}
-            <div className="h-[160px] w-full overflow-hidden flex-shrink-0 bg-black/30">
+            {/* Top half — image fills the card without cropping */}
+            <div className="h-[160px] w-full overflow-hidden flex-shrink-0">
               {cardImage ? (
                 <img
                   src={cardImage}
                   alt={ev.title}
-                  className="w-full h-full object-contain bg-black"
+                  className="w-full h-full object-fill"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center bg-black/30">
                   <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
                 </div>
               )}
