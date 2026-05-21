@@ -213,6 +213,10 @@ const AdminProducts = () => {
           {/* Images */}
           <div className="space-y-2">
             <Label>Images</Label>
+            <p className="text-xs text-muted-foreground">
+              Recommended size: <span className="text-foreground font-medium">1000 × 1000 px</span> (square, under 2 MB).
+              Add more than one image for a scrollable gallery — optional.
+            </p>
             <div className="flex flex-wrap gap-3 mb-2">
               {imageUrls.map((url, i) => (
                 <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
