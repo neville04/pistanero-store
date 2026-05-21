@@ -67,6 +67,7 @@ const HeroCarouselInner = () => {
 const HeroEventCards = ({ events }: { events: EventItem[] }) => {
   const [idx, setIdx] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [openFull, setOpenFull] = useState(false);
 
   if (events.length === 0) return null;
 
@@ -86,6 +87,7 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
 
   // Card is tall: image top half + text bottom half, reaching ~up to "Own" level
   return (
+    <>
     <div
       className="absolute z-20"
       style={{ left: 28, bottom: 28 }}
@@ -118,7 +120,8 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: direction * -18 }}
             transition={{ duration: 0.28, ease: "easeInOut" }}
-            className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col"
+            onClick={() => setOpenFull(true)}
+            className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all"
             style={{
               background: "rgba(10, 10, 15, 0.55)",
               backdropFilter: "blur(16px)",
@@ -133,7 +136,7 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
                 <img
                   src={ev.image_url}
                   alt={ev.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -164,6 +167,66 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
         </AnimatePresence>
       </div>
     </div>
+    <AnimatePresence>
+      {openFull && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-black/85 backdrop-blur-md"
+          onClick={() => setOpenFull(false)}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setOpenFull(false); }}
+            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white hover:bg-primary hover:border-primary transition-all flex items-center justify-center text-xl"
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <motion.div
+            initial={{ scale: 0.94, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.94, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden flex flex-col"
+            style={{
+              background: "rgba(10,10,15,0.7)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+            }}
+          >
+            {ev.image_url && (
+              <div className="w-full bg-black flex items-center justify-center" style={{ maxHeight: "65vh" }}>
+                <img
+                  src={ev.image_url}
+                  alt={ev.title}
+                  className="w-full h-full object-contain"
+                  style={{ maxHeight: "65vh" }}
+                />
+              </div>
+            )}
+            <div className="p-6 overflow-y-auto">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs bg-primary/20 text-primary px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wide">
+                  {ev.tag}
+                </span>
+                <span className="text-xs text-white/60">{ev.date_label}</span>
+              </div>
+              <h3 className="text-white font-bold mb-3" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.75rem", letterSpacing: "0.03em" }}>
+                {ev.title}
+              </h3>
+              {ev.excerpt && (
+                <p className="text-white/75 text-sm leading-relaxed whitespace-pre-line">{ev.excerpt}</p>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 };
 
