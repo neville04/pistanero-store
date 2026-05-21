@@ -18,6 +18,7 @@ interface EventRow {
   tag: string;
   date_label: string;
   image_url: string | null;
+  image_urls: string[];
   created_at: string;
 }
 
@@ -26,7 +27,7 @@ const emptyForm = {
   excerpt: "",
   tag: "Announcement",
   date_label: "",
-  image_url: "",
+  image_urls: [] as string[],
 };
 
 const AdminEvents = () => {
@@ -56,15 +57,17 @@ const AdminEvents = () => {
   }, [user, navigate]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `events/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("product-images").upload(path, file);
-    if (error) { toast.error("Failed to upload image"); setUploading(false); return; }
-    const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
-    setForm((prev) => ({ ...prev, image_url: urlData.publicUrl }));
+    for (const file of Array.from(files)) {
+      const ext = file.name.split(".").pop();
+      const path = `events/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("product-images").upload(path, file);
+      if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
+      const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+      setForm((prev) => ({ ...prev, image_urls: [...prev.image_urls, urlData.publicUrl] }));
+    }
     setUploading(false);
     e.target.value = "";
   };
@@ -81,7 +84,9 @@ const AdminEvents = () => {
       excerpt: event.excerpt || "",
       tag: event.tag,
       date_label: event.date_label,
-      image_url: event.image_url || "",
+      image_urls: event.image_urls && event.image_urls.length > 0
+        ? event.image_urls
+        : (event.image_url ? [event.image_url] : []),
     });
     setEditingId(event.id);
     setShowForm(true);
@@ -98,7 +103,8 @@ const AdminEvents = () => {
       excerpt: form.excerpt.trim() || null,
       tag: form.tag,
       date_label: form.date_label.trim(),
-      image_url: form.image_url.trim() || null,
+      image_url: form.image_urls[0] || null,
+      image_urls: form.image_urls,
     };
 
     if (editingId) {
@@ -159,31 +165,34 @@ const AdminEvents = () => {
             {/* Image */}
             <div className="space-y-2">
               <Label>Event Image</Label>
-              {form.image_url && (
-                <div className="relative w-full h-48 rounded-xl overflow-hidden mb-3 border border-border">
-                  <img src={form.image_url} alt="preview" className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => setForm((p) => ({ ...p, image_url: "" }))}
-                    className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-destructive-foreground"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+              <p className="text-xs text-muted-foreground">
+                Recommended size: <span className="text-foreground font-medium">1200 × 800 px</span> (3:2 landscape, under 2 MB).
+                The first image is shown on the card; add more for an optional scrollable gallery.
+              </p>
+              {form.image_urls.length > 0 && (
+                <div className="flex flex-wrap gap-3 mb-2">
+                  {form.image_urls.map((url, i) => (
+                    <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setForm((p) => ({ ...p, image_urls: p.image_urls.filter((_, idx) => idx !== i) }))}
+                        className="absolute top-0.5 right-0.5 p-0.5 rounded-full bg-destructive text-destructive-foreground"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                      {i === 0 && (
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary/80 text-primary-foreground text-[10px] text-center py-0.5 uppercase tracking-wide">Cover</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
-              <div className="flex gap-2">
-                <label className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary transition-colors text-sm text-muted-foreground whitespace-nowrap">
-                  <ImagePlus className="w-4 h-4" />
-                  {uploading ? "Uploading..." : "Upload Image"}
-                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-                </label>
-                <Input
-                  placeholder="Or paste image URL"
-                  value={form.image_url}
-                  onChange={(e) => setForm((p) => ({ ...p, image_url: e.target.value }))}
-                  className="flex-1"
-                />
-              </div>
+              <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border cursor-pointer hover:border-primary transition-colors text-sm text-muted-foreground">
+                <ImagePlus className="w-4 h-4" />
+                {uploading ? "Uploading..." : "Upload Image(s)"}
+                <input type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" />
+              </label>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">

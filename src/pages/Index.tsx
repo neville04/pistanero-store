@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import Footer from "@/components/Footer";
 import SignInPromptDialog from "@/components/SignInPromptDialog";
+import ProductImageDialog from "@/components/ProductImageDialog";
 import { supabase } from "@/integrations/supabase/client";
 
 interface EventItem {
@@ -21,6 +22,7 @@ interface EventItem {
   tag: string;
   date_label: string;
   image_url: string | null;
+  image_urls?: string[];
 }
 
 const heroImages = [heroImage1, heroImage2, heroImage3, heroImage4, heroImage5];
@@ -68,6 +70,7 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
   const [idx, setIdx] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [openFull, setOpenFull] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
 
   if (events.length === 0) return null;
 
@@ -76,14 +79,22 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
 
   const prev = () => {
     setDirection(-1);
+    setImgIdx(0);
     setIdx((i) => (i - 1 + total) % total);
   };
   const next = () => {
     setDirection(1);
+    setImgIdx(0);
     setIdx((i) => (i + 1) % total);
   };
 
   const ev = visible[idx];
+  const evImages = (ev.image_urls && ev.image_urls.length > 0)
+    ? ev.image_urls
+    : (ev.image_url ? [ev.image_url] : []);
+  const cardImage = evImages[0] ?? null;
+  const fullImage = evImages[imgIdx] ?? cardImage;
+  const hasMultiple = evImages.length > 1;
 
   // Card is tall: image top half + text bottom half, reaching ~up to "Own" level
   return (
@@ -132,9 +143,9 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
           >
             {/* Top half — image */}
             <div className="h-[160px] w-full overflow-hidden flex-shrink-0 bg-black/30">
-              {ev.image_url ? (
+              {cardImage ? (
                 <img
-                  src={ev.image_url}
+                  src={cardImage}
                   alt={ev.title}
                   className="w-full h-full object-contain bg-black"
                 />
@@ -198,14 +209,35 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
               border: "1px solid rgba(255,255,255,0.15)",
             }}
           >
-            {ev.image_url && (
+            {fullImage && (
               <div className="w-full bg-black flex items-center justify-center" style={{ maxHeight: "65vh" }}>
                 <img
-                  src={ev.image_url}
+                  src={fullImage}
                   alt={ev.title}
                   className="w-full h-full object-contain"
                   style={{ maxHeight: "65vh" }}
                 />
+                {hasMultiple && (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setImgIdx((i) => (i - 1 + evImages.length) % evImages.length); }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white hover:bg-primary hover:border-primary transition-all flex items-center justify-center"
+                      aria-label="Previous image"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setImgIdx((i) => (i + 1) % evImages.length); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white hover:bg-primary hover:border-primary transition-all flex items-center justify-center"
+                      aria-label="Next image"
+                    >
+                      ›
+                    </button>
+                    <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/80 bg-black/50 px-2 py-0.5 rounded-full">
+                      {imgIdx + 1} / {evImages.length}
+                    </span>
+                  </>
+                )}
               </div>
             )}
             <div className="p-6 overflow-y-auto">
@@ -236,6 +268,11 @@ const Index = () => {
   const { products: featured, loading } = useProducts(true);
   const [signInOpen, setSignInOpen] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [imageViewer, setImageViewer] = useState<{ open: boolean; images: string[]; name: string }>({
+    open: false,
+    images: [],
+    name: "",
+  });
 
   useEffect(() => {
     supabase.from("events").select("*").order("created_at", { ascending: false }).then(({ data }) => {
@@ -343,7 +380,13 @@ const Index = () => {
                   transition={{ delay: i * 0.1 }}
                   className="glass-card p-6 flex flex-col hover-glow group will-change-transform"
                 >
-                  <div className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30">
+                  <button
+                    type="button"
+                    onClick={() => product.image_urls.length > 0 && setImageViewer({ open: true, images: product.image_urls, name: product.name })}
+                    className="w-full h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden bg-secondary/30 disabled:cursor-default"
+                    disabled={product.image_urls.length === 0}
+                    aria-label={`Open ${product.name} image gallery`}
+                  >
                     {product.image_urls.length > 0 ? (
                       <img src={product.image_urls[0]} alt={product.name} className="w-full h-full object-contain" loading="lazy" />
                     ) : (
@@ -351,7 +394,7 @@ const Index = () => {
                         {product.category}
                       </span>
                     )}
-                  </div>
+                  </button>
                   <h3 className="font-display text-sm font-semibold mb-1 group-hover:text-primary transition-colors">
                     {product.name}
                   </h3>
@@ -376,6 +419,12 @@ const Index = () => {
       </section>
 
       <SignInPromptDialog open={signInOpen} onOpenChange={setSignInOpen} />
+      <ProductImageDialog
+        open={imageViewer.open}
+        onOpenChange={(open) => setImageViewer((v) => ({ ...v, open }))}
+        images={imageViewer.images}
+        productName={imageViewer.name}
+      />
       <Footer />
     </div>
   );
