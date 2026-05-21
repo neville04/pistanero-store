@@ -20,6 +20,7 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Orders from "./pages/Orders";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminPlayers from "./pages/admin/AdminPlayers";
