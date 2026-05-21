@@ -121,8 +121,8 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
         </button>
       </div>
 
-      {/* Card stack — taller card with image top half, text bottom half */}
-      <div className="relative w-[260px]">
+      {/* Card stack — fixed-size card with image top half, text bottom half */}
+      <div className="relative w-[260px]" style={{ height: 320 }}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={ev.id}
@@ -132,7 +132,7 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
             exit={{ opacity: 0, x: direction * -18 }}
             transition={{ duration: 0.28, ease: "easeInOut" }}
             onClick={() => setOpenFull(true)}
-            className="rounded-2xl overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all"
+            className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all"
             style={{
               background: "rgba(10, 10, 15, 0.55)",
               backdropFilter: "blur(16px)",
@@ -141,18 +141,20 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            {/* Image — natural aspect, fully visible, capped height */}
-            {cardImage ? (
-              <img
-                src={cardImage}
-                alt={ev.title}
-                className="w-full h-auto max-h-[260px] object-contain bg-black flex-shrink-0"
-              />
-            ) : (
-              <div className="w-full h-[140px] flex items-center justify-center bg-black/30">
-                <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
-              </div>
-            )}
+            {/* Top half — image */}
+            <div className="h-[160px] w-full overflow-hidden flex-shrink-0 bg-black/30">
+              {cardImage ? (
+                <img
+                  src={cardImage}
+                  alt={ev.title}
+                  className="w-full h-full object-contain bg-black"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
+                </div>
+              )}
+            </div>
 
             {/* Bottom half — text */}
             <div className="flex-1 p-4 flex flex-col">
