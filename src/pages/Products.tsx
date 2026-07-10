@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Filter } from "lucide-react";
+import { ShoppingCart, Filter, Search } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +11,7 @@ import ProductImageDialog from "@/components/ProductImageDialog";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [signInOpen, setSignInOpen] = useState(false);
   const [imageViewer, setImageViewer] = useState<{ open: boolean; images: string[]; name: string }>({
     open: false,
@@ -23,10 +24,19 @@ const Products = () => {
 
   const categories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
 
-  const filtered =
+  const byCategory =
     selectedCategory === "All"
       ? products
       : products.filter((p) => p.category === selectedCategory);
+
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? byCategory.filter((p) =>
+        [p.name, p.description, p.category, p.section, p.color, p.size]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      )
+    : byCategory;
 
   const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
     if (!user) { setSignInOpen(true); return; }
@@ -46,6 +56,18 @@ const Products = () => {
             Our <span className="text-primary">Products</span>
           </motion.h1>
           <p className="text-muted-foreground mb-8">Premium sports equipment for every athlete.</p>
+
+          {/* Search */}
+          <div className="relative mb-6 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products (e.g. rackets, shoes)..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-secondary/50 border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2 mb-10">
