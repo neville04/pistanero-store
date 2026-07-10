@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Search } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,6 +24,7 @@ const SectionProducts = ({ section, title, subtitle, showGenderFilter = false }:
   const { products, loading } = useProducts();
   const [signInOpen, setSignInOpen] = useState(false);
   const [genderFilter, setGenderFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [imageViewer, setImageViewer] = useState<{ open: boolean; images: string[]; name: string }>({
     open: false,
     images: [],
@@ -46,7 +47,15 @@ const SectionProducts = ({ section, title, subtitle, showGenderFilter = false }:
       )
     : products.filter((p) => ["men", "women", "kids"].includes(p.section));
 
-  const displayProducts = showGenderFilter ? apparelFiltered : filtered;
+  const baseProducts = showGenderFilter ? apparelFiltered : filtered;
+  const q = searchQuery.trim().toLowerCase();
+  const displayProducts = q
+    ? baseProducts.filter((p) =>
+        [p.name, p.description, p.category, p.section, p.color, p.size]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      )
+    : baseProducts;
 
   const handleAdd = (product: { id: string; name: string; price: number; image_urls: string[] }) => {
     if (!user) { setSignInOpen(true); return; }
@@ -66,6 +75,18 @@ const SectionProducts = ({ section, title, subtitle, showGenderFilter = false }:
             {title}
           </motion.h1>
           <p className="text-muted-foreground mb-8">{subtitle}</p>
+
+          {/* Search */}
+          <div className="relative mb-6 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-secondary/50 border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
 
           {/* Gender Filter — apparel only */}
           {showGenderFilter && (

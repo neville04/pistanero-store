@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-const sections = ["men", "women", "courts", "bags", "sports"];
+const sections = ["men", "women", "kids", "courts", "bags", "sports"];
 const categories = ["Footwear", "Rackets", "Balls", "Apparel", "Accessories", "Bags", "Training", "Equipment"];
 
 interface ProductRow {
