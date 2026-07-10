@@ -141,37 +141,50 @@ const HeroEventCards = ({ events }: { events: EventItem[] }) => {
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            {/* Top half — image fills the card without cropping */}
-            <div className="h-[160px] w-full overflow-hidden flex-shrink-0">
-              {cardImage ? (
-                <img
-                  src={cardImage}
-                  alt={ev.title}
-                  className="w-full h-full object-fill"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-black/30">
-                  <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
-                </div>
-              )}
-            </div>
+            {/* Full-bleed image */}
+            {cardImage ? (
+              <img
+                src={cardImage}
+                alt={ev.title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                <span className="text-white/20 text-xs uppercase tracking-widest font-semibold">{ev.tag}</span>
+              </div>
+            )}
 
-            {/* Bottom half — text */}
-            <div className="flex-1 p-4 flex flex-col">
+            {/* Dark gradient scrim over bottom for text legibility */}
+            <div
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{
+                height: "62%",
+                background:
+                  "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.9) 100%)",
+              }}
+            />
+
+            {/* Text overlay */}
+            <div className="relative mt-auto p-4 flex flex-col z-10">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide">
+                <span className="text-[10px] bg-primary/25 text-primary px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide backdrop-blur-sm">
                   {ev.tag}
                 </span>
-                <span className="text-[10px] text-white/50">{ev.date_label}</span>
+                <span className="text-[10px] text-white/70">{ev.date_label}</span>
                 {total > 1 && (
-                  <span className="ml-auto text-[10px] text-white/40">{idx + 1}/{total}</span>
+                  <span className="ml-auto text-[10px] text-white/70">{idx + 1}/{total}</span>
                 )}
               </div>
-              <h3 className="text-white font-bold leading-snug line-clamp-2 mb-1.5" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.03em" }}>
+              <h3
+                className="text-white font-bold leading-snug line-clamp-2 mb-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
+                style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.05rem", letterSpacing: "0.03em" }}
+              >
                 {ev.title}
               </h3>
               {ev.excerpt && (
-                <p className="text-white/60 text-xs line-clamp-3 flex-1">{ev.excerpt}</p>
+                <p className="text-white/85 text-xs line-clamp-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
+                  {ev.excerpt}
+                </p>
               )}
             </div>
           </motion.div>
