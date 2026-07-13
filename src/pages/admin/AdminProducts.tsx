@@ -157,9 +157,14 @@ const AdminProducts = () => {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl font-bold">
-          Product <span className="text-primary">Management</span>
-        </h1>
+        <div>
+          <h1 className="font-display text-3xl font-bold">
+            Product <span className="text-primary">Management</span>
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Total products in system: <span className="text-foreground font-semibold">{products.length}</span>
+          </p>
+        </div>
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"

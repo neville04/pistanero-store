@@ -37,20 +37,22 @@ const SectionProducts = ({ section, title, subtitle, showGenderFilter = false }:
     ? sectionFiltered.filter((p) => p.category.toLowerCase() === genderFilter.toLowerCase() || p.color?.toLowerCase().includes(genderFilter.toLowerCase()) || p.section === genderFilter.toLowerCase())
     : sectionFiltered;
 
-  // For apparel we filter by the gender stored in section field (men/women/kids)
+  // For apparel: "All" shows every product in the system; a gender filter narrows to that section.
   const apparelFiltered = showGenderFilter && genderFilter !== "All"
     ? products.filter((p) =>
-        ["men", "women", "kids"].includes(p.section) &&
-        (genderFilter === "Men" ? p.section === "men" :
-         genderFilter === "Women" ? p.section === "women" :
-         p.section === "kids")
+        genderFilter === "Men" ? p.section === "men" :
+        genderFilter === "Women" ? p.section === "women" :
+        p.section === "kids"
       )
-    : products.filter((p) => ["men", "women", "kids"].includes(p.section));
+    : products;
 
   const baseProducts = showGenderFilter ? apparelFiltered : filtered;
   const q = searchQuery.trim().toLowerCase();
+  // Search operates across ALL products so a query like "rackets" surfaces matches even
+  // when they live outside the current section/gender scope.
+  const searchPool = q ? products : baseProducts;
   const displayProducts = q
-    ? baseProducts.filter((p) =>
+    ? searchPool.filter((p) =>
         [p.name, p.description, p.category, p.section, p.color, p.size]
           .filter(Boolean)
           .some((v) => String(v).toLowerCase().includes(q))
